@@ -53,9 +53,32 @@ export function useCaptcha(options: UseCaptchaOptions = {}): UseCaptchaReturn {
 
   // 初始化验证码
   const initCaptcha = () => {
+    // 等待 SDK 加载（最多等待 5 秒）
+    let checkCount = 0
+    const maxChecks = 50 // 5秒
+    
+    const checkSdk = () => {
+      if (window.initAlicom4) {
+        initSdk()
+      } else if (checkCount < maxChecks) {
+        checkCount++
+        setTimeout(checkSdk, 100)
+      } else {
+        // SDK 加载超时，允许跳过验证
+        console.warn('[useCaptcha] SDK 加载超时，允许跳过验证')
+        isReady.value = true
+        errorMessage.value = '验证码加载失败，可跳过验证'
+      }
+    }
+    
+    checkSdk()
+  }
+
+  const initSdk = () => {
     if (!window.initAlicom4) {
       errorMessage.value = '验证码 SDK 未加载'
       console.error('[useCaptcha] initAlicom4 is not defined')
+      isReady.value = true // 允许跳过验证
       return
     }
 

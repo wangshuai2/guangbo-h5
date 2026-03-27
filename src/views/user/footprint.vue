@@ -13,10 +13,7 @@ const loading = ref(true)
 
 async function fetchFootprint() {
   try {
-    const [statsRes, mapRes] = await Promise.all([
-      getFootprintStats(),
-      getFootprintMap(),
-    ])
+    const [statsRes, mapRes] = await Promise.all([getFootprintStats(), getFootprintMap()])
 
     if (statsRes.code === 0 && statsRes.data) {
       stats.value = statsRes.data
@@ -37,7 +34,7 @@ onMounted(() => {
   showLoadingToast({
     message: '加载中...',
     forbidClick: true,
-    duration: 0,
+    duration: 0
   })
   fetchFootprint()
 })

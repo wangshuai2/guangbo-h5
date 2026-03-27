@@ -4,17 +4,17 @@
 
 ## 技术栈
 
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| Vue | 3.4+ | 核心框架 |
-| Vite | 5+ | 构建工具 |
-| TypeScript | 5+ | 类型支持 |
-| Vant | 4+ | 移动端 UI 组件库 |
-| Pinia | 2+ | 状态管理 |
-| Vue Router | 4+ | 路由管理 |
-| Axios | 1+ | HTTP 客户端 |
-| Sass | - | CSS 预处理 |
-| Mock.js | - | 数据模拟 |
+| 技术       | 版本 | 用途             |
+| ---------- | ---- | ---------------- |
+| Vue        | 3.4+ | 核心框架         |
+| Vite       | 5+   | 构建工具         |
+| TypeScript | 5+   | 类型支持         |
+| Vant       | 4+   | 移动端 UI 组件库 |
+| Pinia      | 2+   | 状态管理         |
+| Vue Router | 4+   | 路由管理         |
+| Axios      | 1+   | HTTP 客户端      |
+| Sass       | -    | CSS 预处理       |
+| Mock.js    | -    | 数据模拟         |
 
 ## 项目结构
 
@@ -86,62 +86,70 @@ npm run preview
 
 ## 页面列表
 
-| 路由 | 页面 | 说明 |
-|------|------|------|
-| `/` | 首页 | 博物馆列表，支持筛选和搜索 |
-| `/museum/:id` | 博物馆详情 | 博物馆信息、镇馆之宝、打卡 |
-| `/checkin` | 打卡页 | 附近博物馆、GPS 打卡 |
-| `/medal` | 勋章页 | 勋章列表、解锁进度 |
-| `/user` | 个人中心 | 用户信息、统计数据 |
-| `/user/footprint` | 我的足迹 | 足迹地图、省份统计 |
-| `/user/favorites` | 我的收藏 | 收藏的博物馆列表 |
-| `/login` | 登录页 | 微信登录 |
-| `/search` | 搜索页 | 博物馆搜索 |
+| 路由              | 页面       | 说明                       |
+| ----------------- | ---------- | -------------------------- |
+| `/`               | 首页       | 博物馆列表，支持筛选和搜索 |
+| `/museum/:id`     | 博物馆详情 | 博物馆信息、镇馆之宝、打卡 |
+| `/checkin`        | 打卡页     | 附近博物馆、GPS 打卡       |
+| `/medal`          | 勋章页     | 勋章列表、解锁进度         |
+| `/user`           | 个人中心   | 用户信息、统计数据         |
+| `/user/footprint` | 我的足迹   | 足迹地图、省份统计         |
+| `/user/favorites` | 我的收藏   | 收藏的博物馆列表           |
+| `/login`          | 登录页     | 微信登录                   |
+| `/search`         | 搜索页     | 博物馆搜索                 |
 
 ## API 接口
 
 ### 认证模块
+
 - `POST /v1/auth/wechat-login` - 微信登录
 - `POST /v1/auth/refresh-token` - 刷新 Token
 - `GET /v1/users/me` - 获取当前用户信息
 
 ### 博物馆模块
+
 - `GET /v1/museums` - 获取博物馆列表
 - `GET /v1/museums/:id` - 获取博物馆详情
 - `GET /v1/museums/nearby` - 获取附近博物馆
 
 ### 打卡模块
+
 - `POST /v1/checkins` - 打卡
 - `GET /v1/checkins` - 获取打卡记录
 
 ### 勋章模块
+
 - `GET /v1/medals` - 获取勋章列表
 
 ### 足迹模块
+
 - `GET /v1/footprint/stats` - 获取足迹统计
 - `GET /v1/footprint/map` - 获取足迹地图数据
 
 ## 环境变量
 
-| 变量名 | 说明 | 默认值 |
-|--------|------|--------|
-| `VITE_API_BASE_URL` | API 基础地址 | `/api` |
-| `VITE_APP_TITLE` | 应用标题 | `逛博 - 发现身边的博物馆` |
+| 变量名              | 说明         | 默认值                    |
+| ------------------- | ------------ | ------------------------- |
+| `VITE_API_BASE_URL` | API 基础地址 | `/api`                    |
+| `VITE_APP_TITLE`    | 应用标题     | `逛博 - 发现身边的博物馆` |
 
 ## 开发规范
 
 ### 代码规范
+
 - 使用 ESLint + Prettier 进行代码格式化
 - 使用 TypeScript 类型检查
 - 组件使用 `<script setup>` 语法
 
 ### 命名规范
+
 - 组件名：PascalCase (如 `MuseumCard.vue`)
 - 文件名：kebab-case (如 `museum-detail.vue`)
 - 变量名：camelCase
 - 常量名：UPPER_SNAKE_CASE
 
 ### Git 提交规范
+
 - `feat`: 新功能
 - `fix`: 修复 bug
 - `docs`: 文档更新

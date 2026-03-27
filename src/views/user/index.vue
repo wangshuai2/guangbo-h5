@@ -53,7 +53,7 @@ onMounted(() => {
     showLoadingToast({
       message: '加载中...',
       forbidClick: true,
-      duration: 0,
+      duration: 0
     })
     fetchUserInfo()
   }

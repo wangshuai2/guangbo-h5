@@ -27,12 +27,14 @@
 **文件：** `src/views/auth/login.vue`
 
 **修复 1：添加防重复点击**
+
 ```typescript
 // 防止重复点击
 if (loading.value) return
 ```
 
 **修复 2：完善 API 响应处理**
+
 ```typescript
 // 响应拦截器已处理 code !== 0 的情况，这里只处理成功
 if (res?.data) {
@@ -45,6 +47,7 @@ if (res?.data) {
 ```
 
 **修复 3：优化错误处理**
+
 ```typescript
 catch (error) {
   // axios 拦截器已显示错误 toast，这里不再重复显示

@@ -1,0 +1,7 @@
+node_modules
+dist
+*.log
+*.lock
+public
+auto-imports.d.ts
+components.d.ts

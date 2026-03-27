@@ -22,7 +22,7 @@ async function fetchNearbyMuseums() {
     const res = await getMuseumNearby({
       lat: currentLocation.value.lat,
       lng: currentLocation.value.lng,
-      distance: 5000,
+      distance: 5000
     })
 
     if (res.code === 0 && res.data) {
@@ -37,7 +37,7 @@ async function fetchNearbyMuseums() {
 }
 
 function getCurrentPosition(): Promise<{ lat: number; lng: number }> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     setTimeout(() => {
       resolve({ lat: 39.9163, lng: 116.3972 })
     }, 500)
@@ -56,13 +56,13 @@ async function handleCheckIn(museum: Museum) {
     const res = await checkIn({
       museumId: museum.id,
       latitude: currentLocation.value?.lat || 0,
-      longitude: currentLocation.value?.lng || 0,
+      longitude: currentLocation.value?.lng || 0
     })
 
     if (res.code === 0 && res.data) {
       showToast({
         type: 'success',
-        message: `在 ${museum.name} 打卡成功！`,
+        message: `在 ${museum.name} 打卡成功！`
       })
       museum.isCheckin = true
     }
@@ -84,7 +84,7 @@ onMounted(() => {
   showLoadingToast({
     message: '获取位置中...',
     forbidClick: true,
-    duration: 0,
+    duration: 0
   })
   fetchNearbyMuseums()
 })

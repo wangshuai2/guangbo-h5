@@ -42,7 +42,7 @@ async function loadMuseums(isRefresh = false) {
       pageSize,
       province: activeProvince.value === '全部' ? undefined : activeProvince.value,
       city: activeCity.value === '全部' ? undefined : activeCity.value,
-      keyword: searchValue.value || undefined,
+      keyword: searchValue.value || undefined
     })
 
     if (res.code === 0 && res.data) {
@@ -108,7 +108,7 @@ onMounted(() => {
   showLoadingToast({
     message: '加载中...',
     forbidClick: true,
-    duration: 0,
+    duration: 0
   })
   loadMuseums()
 })
@@ -117,12 +117,7 @@ onMounted(() => {
 <template>
   <div class="home-page">
     <!-- 顶部搜索栏 -->
-    <van-search
-      v-model="searchValue"
-      placeholder="搜索博物馆"
-      show-action
-      @search="onSearch"
-    >
+    <van-search v-model="searchValue" placeholder="搜索博物馆" show-action @search="onSearch">
       <template #action>
         <van-button size="small" type="primary" @click="onSearch">搜索</van-button>
       </template>
@@ -144,28 +139,11 @@ onMounted(() => {
 
     <!-- 博物馆列表 -->
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-      <van-list
-        v-model:loading="loading"
-        :finished="finished"
-        finished-text="没有更多了"
-        @load="onLoad"
-      >
+      <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <div class="museum-list">
-          <van-card
-            v-for="museum in museumList"
-            :key="museum.id"
-            class="museum-card"
-            @click="goToDetail(museum.id)"
-          >
+          <van-card v-for="museum in museumList" :key="museum.id" class="museum-card" @click="goToDetail(museum.id)">
             <template #thumb>
-              <van-image
-                :src="museum.coverImage"
-                width="120"
-                height="90"
-                fit="cover"
-                radius="8"
-                lazy-load
-              />
+              <van-image :src="museum.coverImage" width="120" height="90" fit="cover" radius="8" lazy-load />
             </template>
             <template #title>
               <div class="museum-name">{{ museum.name }}</div>
@@ -178,7 +156,15 @@ onMounted(() => {
               <div class="museum-tags">
                 <van-tag v-if="museum.isFree" type="success">免费</van-tag>
                 <van-tag type="primary">
-                  {{ museum.type === 'history' ? '历史' : museum.type === 'art' ? '艺术' : museum.type === 'science' ? '科技' : '综合' }}
+                  {{
+                    museum.type === 'history'
+                      ? '历史'
+                      : museum.type === 'art'
+                        ? '艺术'
+                        : museum.type === 'science'
+                          ? '科技'
+                          : '综合'
+                  }}
                 </van-tag>
               </div>
             </template>

@@ -1,4 +1,9 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
+import axios, {
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+  type InternalAxiosRequestConfig
+} from 'axios'
 import { showToast } from 'vant'
 import type { ApiResponse } from '@/types'
 
@@ -7,8 +12,8 @@ const service: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   timeout: 15000,
   headers: {
-    'Content-Type': 'application/json',
-  },
+    'Content-Type': 'application/json'
+  }
 })
 
 // 请求拦截器
@@ -21,7 +26,7 @@ service.interceptors.request.use(
     }
     return config
   },
-  (error) => {
+  error => {
     console.error('请求错误:', error)
     return Promise.reject(error)
   }
@@ -36,7 +41,7 @@ service.interceptors.response.use(
     if (res.code !== 0) {
       showToast({
         message: res.message || '请求失败',
-        position: 'top',
+        position: 'top'
       })
 
       // 登录过期
@@ -50,7 +55,7 @@ service.interceptors.response.use(
 
     return response
   },
-  (error) => {
+  error => {
     console.error('响应错误:', error)
 
     let message = '网络错误，请稍后重试'
@@ -77,7 +82,7 @@ service.interceptors.response.use(
 
     showToast({
       message,
-      position: 'top',
+      position: 'top'
     })
 
     return Promise.reject(error)
@@ -87,20 +92,20 @@ service.interceptors.response.use(
 // 封装请求方法
 export const request = {
   get<T = any>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return service.get(url, config).then((res) => res.data)
+    return service.get(url, config).then(res => res.data)
   },
 
   post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return service.post(url, data, config).then((res) => res.data)
+    return service.post(url, data, config).then(res => res.data)
   },
 
   put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return service.put(url, data, config).then((res) => res.data)
+    return service.put(url, data, config).then(res => res.data)
   },
 
   delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return service.delete(url, config).then((res) => res.data)
-  },
+    return service.delete(url, config).then(res => res.data)
+  }
 }
 
 export default service

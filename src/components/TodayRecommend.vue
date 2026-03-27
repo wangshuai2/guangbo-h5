@@ -60,14 +60,10 @@ async function loadRecommend() {
 
   try {
     // 并行加载季节推荐和位置
-    const [todayRes] = await Promise.all([
-      getTodayRecommend(5),
-      requestLocation()
-    ])
+    const [todayRes] = await Promise.all([getTodayRecommend(5), requestLocation()])
 
     if (todayRes.code === 0 && todayRes.data) {
-      seasonMuseums.value = [...(todayRes.data.season || []), ...(todayRes.data.hot || [])]
-        .slice(0, 5) // 取前5个
+      seasonMuseums.value = [...(todayRes.data.season || []), ...(todayRes.data.hot || [])].slice(0, 5) // 取前5个
     }
   } catch (error) {
     showToast('加载推荐失败')
@@ -117,20 +113,8 @@ onMounted(() => {
           <span>附近推荐</span>
         </div>
         <div class="museum-scroll">
-          <div
-            v-for="museum in nearbyMuseums"
-            :key="museum.id"
-            class="museum-card"
-            @click="goToDetail(museum.id)"
-          >
-            <van-image
-              :src="museum.coverImage"
-              width="140"
-              height="100"
-              fit="cover"
-              radius="8"
-              lazy-load
-            />
+          <div v-for="museum in nearbyMuseums" :key="museum.id" class="museum-card" @click="goToDetail(museum.id)">
+            <van-image :src="museum.coverImage" width="140" height="100" fit="cover" radius="8" lazy-load />
             <div class="museum-info">
               <div class="museum-name">{{ museum.name }}</div>
               <div class="museum-meta">
@@ -155,20 +139,8 @@ onMounted(() => {
           <span>精选推荐</span>
         </div>
         <div class="museum-scroll">
-          <div
-            v-for="museum in seasonMuseums"
-            :key="museum.id"
-            class="museum-card"
-            @click="goToDetail(museum.id)"
-          >
-            <van-image
-              :src="museum.coverImage"
-              width="140"
-              height="100"
-              fit="cover"
-              radius="8"
-              lazy-load
-            />
+          <div v-for="museum in seasonMuseums" :key="museum.id" class="museum-card" @click="goToDetail(museum.id)">
+            <van-image :src="museum.coverImage" width="140" height="100" fit="cover" radius="8" lazy-load />
             <div class="museum-info">
               <div class="museum-name">{{ museum.name }}</div>
               <div class="museum-meta">

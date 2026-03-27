@@ -22,7 +22,7 @@ async function fetchCheckinHistory(isLoadMore = false) {
     showLoadingToast({
       message: '加载中...',
       forbidClick: true,
-      duration: 0,
+      duration: 0
     })
   } else {
     loadingMore.value = true
@@ -31,7 +31,7 @@ async function fetchCheckinHistory(isLoadMore = false) {
   try {
     const res = await getCheckinList({
       page: page.value,
-      pageSize: 20,
+      pageSize: 20
     })
 
     if (res.code === 0 && res.data) {
@@ -107,12 +107,7 @@ onMounted(() => {
     </div>
 
     <!-- 打卡列表 -->
-    <van-list
-      v-model:loading="loadingMore"
-      :finished="finished"
-      finished-text="没有更多了"
-      @load="onLoad"
-    >
+    <van-list v-model:loading="loadingMore" :finished="finished" finished-text="没有更多了" @load="onLoad">
       <div class="checkin-list">
         <div
           v-for="checkin in checkinList"
@@ -120,13 +115,7 @@ onMounted(() => {
           class="checkin-item"
           @click="goToMuseum(checkin.museumId)"
         >
-          <van-image
-            :src="checkin.museum?.coverImage"
-            width="80"
-            height="80"
-            fit="cover"
-            radius="8"
-          />
+          <van-image :src="checkin.museum?.coverImage" width="80" height="80" fit="cover" radius="8" />
           <div class="checkin-info">
             <div class="museum-name">{{ checkin.museum?.name }}</div>
             <div class="location">

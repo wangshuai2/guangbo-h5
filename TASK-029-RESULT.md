@@ -11,6 +11,7 @@
 ### 1. 登录页面重构 (`src/views/auth/login.vue`)
 
 **新增功能：**
+
 - 登录方式切换 Tab（微信登录 / 手机登录）
 - 手机号输入框（11位验证）
 - 验证码输入框（6位数字）
@@ -20,6 +21,7 @@
 ### 2. API 接口 (`src/api/auth.ts`)
 
 **新增接口：**
+
 ```typescript
 // 发送短信验证码
 export function sendSmsCode(phone: string)
@@ -46,10 +48,10 @@ export function phoneLogin(params: { phone: string; code: string })
 
 ### 验证规则
 
-| 字段 | 规则 |
-|------|------|
+| 字段   | 规则                     |
+| ------ | ------------------------ |
 | 手机号 | 11位，以1开头，第二位3-9 |
-| 验证码 | 6位数字 |
+| 验证码 | 6位数字                  |
 
 ### 安全特性
 
@@ -88,6 +90,7 @@ export function phoneLogin(params: { phone: string; code: string })
 ## ⏳ 待联调
 
 **后端接口（TASK-030 xiaofu 负责）：**
+
 - `POST /v1/auth/sms-code` - 发送验证码
 - `POST /v1/auth/phone-login` - 手机号登录
 
@@ -98,10 +101,10 @@ export function phoneLogin(params: { phone: string; code: string })
 
 ## 📁 修改文件
 
-| 文件 | 操作 | 说明 |
-|------|------|------|
-| `src/views/auth/login.vue` | 重构 | 添加手机号登录功能 |
-| `src/api/auth.ts` | 新增 | sendSmsCode, phoneLogin 接口 |
+| 文件                       | 操作 | 说明                         |
+| -------------------------- | ---- | ---------------------------- |
+| `src/views/auth/login.vue` | 重构 | 添加手机号登录功能           |
+| `src/api/auth.ts`          | 新增 | sendSmsCode, phoneLogin 接口 |
 
 ---
 

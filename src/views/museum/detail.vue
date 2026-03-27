@@ -60,10 +60,12 @@ async function handleCheckIn() {
     showConfirmDialog({
       title: '提示',
       message: '请先登录后再打卡',
-      confirmButtonText: '去登录',
-    }).then(() => {
-      router.push('/login')
-    }).catch(() => {})
+      confirmButtonText: '去登录'
+    })
+      .then(() => {
+        router.push('/login')
+      })
+      .catch(() => {})
     return
   }
 
@@ -73,19 +75,19 @@ async function handleCheckIn() {
     const res = await checkIn({
       museumId: museum.value!.id,
       latitude: position.lat,
-      longitude: position.lng,
+      longitude: position.lng
     })
 
     if (res.code === 0 && res.data) {
       showToast({
         type: 'success',
-        message: '打卡成功！',
+        message: '打卡成功！'
       })
 
       if (res.data.medals && res.data.medals.length > 0) {
         showToast({
           message: `恭喜获得勋章：${res.data.medals[0].name}`,
-          icon: 'medal-o',
+          icon: 'medal-o'
         })
       }
     }
@@ -96,7 +98,7 @@ async function handleCheckIn() {
 
 // 获取当前位置
 function getCurrentPosition(): Promise<{ lat: number; lng: number }> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     resolve({ lat: 39.9163, lng: 116.3972 })
   })
 }
@@ -107,14 +109,14 @@ const typeMap: Record<string, string> = {
   art: '艺术博物馆',
   science: '科技博物馆',
   nature: '自然博物馆',
-  general: '综合博物馆',
+  general: '综合博物馆'
 }
 
 onMounted(() => {
   showLoadingToast({
     message: '加载中...',
     forbidClick: true,
-    duration: 0,
+    duration: 0
   })
   fetchMuseumDetail()
 })
@@ -122,11 +124,7 @@ onMounted(() => {
 
 <template>
   <div class="museum-detail">
-    <van-nav-bar
-      title="博物馆详情"
-      left-arrow
-      @click-left="router.back()"
-    >
+    <van-nav-bar title="博物馆详情" left-arrow @click-left="router.back()">
       <template #right>
         <van-icon
           :name="isFavorited ? 'star' : 'star-o'"
@@ -139,12 +137,7 @@ onMounted(() => {
 
     <template v-if="museum">
       <!-- 封面图 -->
-      <van-image
-        :src="museum.coverImage"
-        width="100%"
-        height="240"
-        fit="cover"
-      />
+      <van-image :src="museum.coverImage" width="100%" height="240" fit="cover" />
 
       <!-- 基本信息 -->
       <div class="info-section">

@@ -26,14 +26,14 @@ const rarityColors: Record<string, string> = {
   common: '#969799',
   rare: '#1989fa',
   epic: '#7232dd',
-  legendary: '#ff976a',
+  legendary: '#ff976a'
 }
 
 const rarityNames: Record<string, string> = {
   common: '普通',
   rare: '稀有',
   epic: '史诗',
-  legendary: '传说',
+  legendary: '传说'
 }
 
 function getProgressPercent(medal: Medal): number {
@@ -45,7 +45,7 @@ onMounted(() => {
   showLoadingToast({
     message: '加载中...',
     forbidClick: true,
-    duration: 0,
+    duration: 0
   })
   fetchMedals()
 })
@@ -102,9 +102,7 @@ onMounted(() => {
               stroke-width="4"
               :color="rarityColors[medal.rarity]"
             />
-            <span class="progress-text">
-              {{ medal.progress.current }} / {{ medal.progress.target }}
-            </span>
+            <span class="progress-text">{{ medal.progress.current }} / {{ medal.progress.target }}</span>
           </div>
         </div>
         <div v-if="medal.isUnlocked" class="unlocked-badge">

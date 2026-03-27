@@ -20,7 +20,7 @@ async function handleCaptchaSuccess(result: PnvsValidateResult) {
   showLoadingToast({
     message: '登录中...',
     forbidClick: true,
-    duration: 0,
+    duration: 0
   })
 
   try {
@@ -31,15 +31,15 @@ async function handleCaptchaSuccess(result: PnvsValidateResult) {
       code: mockCode,
       userInfo: {
         nickname: '微信用户',
-        avatar: 'https://picsum.photos/100/100',
+        avatar: 'https://picsum.photos/100/100'
       },
       // 将验证码结果传递给后端进行二次校验
       captcha: {
         lot_number: result.lot_number,
         captcha_output: result.captcha_output,
         pass_token: result.pass_token,
-        gen_time: result.gen_time,
-      },
+        gen_time: result.gen_time
+      }
     })
 
     if (res.code === 0 && res.data) {
@@ -47,7 +47,7 @@ async function handleCaptchaSuccess(result: PnvsValidateResult) {
       userStore.setUserInfo(res.data.user)
       showToast({
         type: 'success',
-        message: '登录成功',
+        message: '登录成功'
       })
 
       // 跳转到之前的页面或首页
@@ -110,15 +110,7 @@ function handleGuest() {
           </template>
         </CaptchaButton>
 
-        <van-button
-          block
-          round
-          size="large"
-          plain
-          @click="handleGuest"
-        >
-          游客模式
-        </van-button>
+        <van-button block round size="large" plain @click="handleGuest">游客模式</van-button>
       </div>
 
       <!-- 用户协议 -->

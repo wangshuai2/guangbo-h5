@@ -1,14 +1,15 @@
 /**
  * 阿里云 PNVS 图形验证码 Composable
  * 用于在 Vue 组件中方便地集成图形验证码
+ * 参考示例: public-demo-vue3
  */
 import { ref, onUnmounted } from 'vue'
 import type { PnvsCaptchaObject, PnvsValidateResult, PnvsFailObject, PnvsErrorObject } from '@/types/pnvs'
 
 /** PNVS 配置 */
 const PNVS_CONFIG = {
-  appId: 'd75b9dca0d62b49c157730afa489eae2',
-  // appKey 仅用于后端验证，前端不需要
+  captchaId: 'd75b9dca0d62b49c157730afa489eae2',
+  product: 'bind' as const
 }
 
 export interface UseCaptchaOptions {
@@ -20,6 +21,8 @@ export interface UseCaptchaOptions {
   onError?: (error: PnvsErrorObject) => void
   /** 用户关闭验证回调 */
   onClose?: () => void
+  /** 验证码准备就绪回调 */
+  onReady?: () => void
 }
 
 export interface UseCaptchaReturn {
@@ -51,6 +54,46 @@ export function useCaptcha(options: UseCaptchaOptions = {}): UseCaptchaReturn {
 
   let captchaObj: PnvsCaptchaObject | null = null
 
+  // 初始化回调处理函数
+  const captchaHandler = (captcha: PnvsCaptchaObject) => {
+    captchaObj = captcha
+
+    captcha
+      .onReady(() => {
+        console.log('[useCaptcha] 验证码按钮已准备就绪')
+      })
+      .onNextReady(() => {
+        isReady.value = true
+        console.log('[useCaptcha] 验证码已准备就绪')
+        options.onReady?.()
+      })
+      .onSuccess(() => {
+        isValidating.value = false
+        const result = captcha.getValidate()
+        if (result) {
+          validateResult.value = result
+          console.log('[useCaptcha] 验证成功', result)
+          options.onSuccess?.(result)
+        }
+      })
+      .onFail((failObj: PnvsFailObject) => {
+        isValidating.value = false
+        console.warn('[useCaptcha] 验证失败', failObj)
+        options.onFail?.(failObj)
+      })
+      .onError((error: PnvsErrorObject) => {
+        isValidating.value = false
+        errorMessage.value = error.msg || '验证出错'
+        console.error('[useCaptcha] 验证出错', error)
+        options.onError?.(error)
+      })
+      .onClose(() => {
+        isValidating.value = false
+        console.log('[useCaptcha] 用户关闭验证')
+        options.onClose?.()
+      })
+  }
+
   // 初始化验证码
   const initCaptcha = () => {
     if (!window.initAlicom4) {
@@ -61,43 +104,10 @@ export function useCaptcha(options: UseCaptchaOptions = {}): UseCaptchaReturn {
 
     window.initAlicom4(
       {
-        captchaId: PNVS_CONFIG.appId,
-        product: 'bind',
+        captchaId: PNVS_CONFIG.captchaId,
+        product: PNVS_CONFIG.product
       },
-      (captcha) => {
-        captchaObj = captcha
-
-        captcha
-          .onNextReady(() => {
-            isReady.value = true
-            console.log('[useCaptcha] 验证码已准备就绪')
-          })
-          .onSuccess(() => {
-            isValidating.value = false
-            const result = captcha.getValidate()
-            if (result) {
-              validateResult.value = result
-              console.log('[useCaptcha] 验证成功', result)
-              options.onSuccess?.(result)
-            }
-          })
-          .onFail((failObj) => {
-            isValidating.value = false
-            console.warn('[useCaptcha] 验证失败', failObj)
-            options.onFail?.(failObj)
-          })
-          .onError((error) => {
-            isValidating.value = false
-            errorMessage.value = error.msg || '验证出错'
-            console.error('[useCaptcha] 验证出错', error)
-            options.onError?.(error)
-          })
-          .onClose(() => {
-            isValidating.value = false
-            console.log('[useCaptcha] 用户关闭验证')
-            options.onClose?.()
-          })
-      }
+      captchaHandler
     )
   }
 
@@ -146,6 +156,6 @@ export function useCaptcha(options: UseCaptchaOptions = {}): UseCaptchaReturn {
     errorMessage,
     showCaptcha,
     reset,
-    getValidateResult,
+    getValidateResult
   }
 }

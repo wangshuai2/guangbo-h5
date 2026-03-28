@@ -181,6 +181,14 @@ export interface NearbyParams {
   limit?: number
 }
 
+// 图形验证码参数
+export interface CaptchaParams {
+  lot_number: string
+  captcha_output: string
+  pass_token: string
+  gen_time: string
+}
+
 // 登录参数
 export interface LoginParams {
   code: string
@@ -188,6 +196,8 @@ export interface LoginParams {
     nickname: string
     avatar: string
   }
+  /** 图形验证码验证结果，用于后端二次校验 */
+  captcha?: CaptchaParams
 }
 
 // 登录响应

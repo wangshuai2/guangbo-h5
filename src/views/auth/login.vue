@@ -4,15 +4,18 @@ import { useRouter, useRoute } from 'vue-router'
 import { showToast, showLoadingToast, closeToast } from 'vant'
 import { wechatLogin } from '@/api/auth'
 import { useUserStore } from '@/stores/user'
+import CaptchaButton from '@/components/CaptchaButton.vue'
+import type { PnvsValidateResult } from '@/types/pnvs.js'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 
 const loading = ref(false)
+const captchaRef = ref<InstanceType<typeof CaptchaButton> | null>(null)
 
-// 模拟微信登录
-async function handleWechatLogin() {
+// 验证成功后进行微信登录
+async function handleCaptchaSuccess(result: PnvsValidateResult) {
   loading.value = true
   showLoadingToast({
     message: '登录中...',
@@ -30,6 +33,13 @@ async function handleWechatLogin() {
         nickname: '微信用户',
         avatar: 'https://picsum.photos/100/100',
       },
+      // 将验证码结果传递给后端进行二次校验
+      captcha: {
+        lot_number: result.lot_number,
+        captcha_output: result.captcha_output,
+        pass_token: result.pass_token,
+        gen_time: result.gen_time,
+      },
     })
 
     if (res.code === 0 && res.data) {
@@ -46,10 +56,22 @@ async function handleWechatLogin() {
     }
   } catch (error) {
     showToast('登录失败')
+    // 重置验证码
+    captchaRef.value?.reset()
   } finally {
     loading.value = false
     closeToast()
   }
+}
+
+// 验证失败
+function handleCaptchaFail() {
+  showToast('验证失败，请重试')
+}
+
+// 验证出错
+function handleCaptchaError(message: string) {
+  showToast(message || '验证出错')
 }
 
 // 游客模式
@@ -72,17 +94,21 @@ function handleGuest() {
 
       <!-- 登录按钮 -->
       <div class="login-buttons">
-        <van-button
+        <!-- 图形验证码按钮（验证通过后自动触发微信登录） -->
+        <CaptchaButton
+          ref="captchaRef"
           type="primary"
-          block
-          round
-          size="large"
-          :loading="loading"
-          @click="handleWechatLogin"
+          text="微信登录"
+          :disabled="loading"
+          @success="handleCaptchaSuccess"
+          @fail="handleCaptchaFail"
+          @error="handleCaptchaError"
         >
-          <van-icon name="wechat" />
-          微信登录
-        </van-button>
+          <template #default>
+            <van-icon name="wechat" />
+            <span>微信登录</span>
+          </template>
+        </CaptchaButton>
 
         <van-button
           block

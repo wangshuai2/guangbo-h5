@@ -22,6 +22,8 @@ declare module 'vue' {
     ReviewItem: typeof import('./components/ReviewItem.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SignInCalendar: typeof import('./components/SignInCalendar.vue')['default']
+    SignInReward: typeof import('./components/SignInReward.vue')['default']
     TabBar: typeof import('./components/TabBar.vue')['default']
     TodayRecommend: typeof import('./components/TodayRecommend.vue')['default']
     VanButton: typeof import('vant/es')['Button']

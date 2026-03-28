@@ -88,6 +88,25 @@ const routes: RouteRecordRaw[] = [
       showTabBar: false,
     },
   },
+  {
+    path: '/user/level',
+    name: 'UserLevel',
+    component: () => import('@/views/user/level.vue'),
+    meta: {
+      title: '等级系统',
+      showTabBar: false,
+      requireAuth: true,
+    },
+  },
+  {
+    path: '/search-enhanced',
+    name: 'SearchEnhanced',
+    component: () => import('@/views/home/search-enhanced.vue'),
+    meta: {
+      title: '高级搜索',
+      showTabBar: false,
+    },
+  },
 ]
 
 const router = createRouter({

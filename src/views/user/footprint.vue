@@ -4,18 +4,19 @@ import { useRouter } from 'vue-router'
 import { showLoadingToast, closeToast, showToast } from 'vant'
 import { getFootprintMap, getFootprintStats } from '@/api/footprint'
 import type { FootprintMap, UserStats } from '@/types'
-import PosterGenerator from '@/components/PosterGenerator.vue'
 
 const router = useRouter()
 
 const stats = ref<UserStats | null>(null)
 const footprintMap = ref<FootprintMap | null>(null)
 const loading = ref(true)
-const showPoster = ref(false)
 
 async function fetchFootprint() {
   try {
-    const [statsRes, mapRes] = await Promise.all([getFootprintStats(), getFootprintMap()])
+    const [statsRes, mapRes] = await Promise.all([
+      getFootprintStats(),
+      getFootprintMap(),
+    ])
 
     if (statsRes.code === 0 && statsRes.data) {
       stats.value = statsRes.data
@@ -36,15 +37,10 @@ onMounted(() => {
   showLoadingToast({
     message: '加载中...',
     forbidClick: true,
-    duration: 0
+    duration: 0,
   })
   fetchFootprint()
 })
-
-function handleShared(channel: string) {
-  showToast(`已分享到${channel === 'wechat_moments' ? '朋友圈' : channel}`)
-  showPoster.value = false
-}
 </script>
 
 <template>
@@ -75,17 +71,6 @@ function handleShared(channel: string) {
       <van-icon name="map" size="60" color="#ccc" />
       <p>足迹地图展示区域</p>
     </div>
-
-    <!-- 分享海报入口 -->
-    <div class="poster-entry">
-      <van-button type="primary" block round @click="showPoster = true">
-        <van-icon name="share-o" />
-        分享我的足迹海报
-      </van-button>
-    </div>
-
-    <!-- 海报生成器 -->
-    <PosterGenerator v-model:visible="showPoster" @close="showPoster = false" @shared="handleShared" />
 
     <!-- 省份列表 -->
     <div class="province-list" v-if="footprintMap">
@@ -142,17 +127,6 @@ function handleShared(channel: string) {
   background-color: #f0f0f0;
   color: #999;
   margin-bottom: 12px;
-}
-
-.poster-entry {
-  padding: 16px;
-  margin-bottom: 12px;
-
-  .van-button {
-    .van-icon {
-      margin-right: 8px;
-    }
-  }
 }
 
 .province-list {

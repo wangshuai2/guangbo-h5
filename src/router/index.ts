@@ -89,22 +89,23 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: '/user/level',
-    name: 'UserLevel',
-    component: () => import('@/views/user/level.vue'),
+    path: '/team',
+    name: 'TeamCheckin',
+    component: () => import('@/views/team/index.vue'),
     meta: {
-      title: '等级系统',
+      title: '组队打卡',
       showTabBar: false,
       requireAuth: true,
     },
   },
   {
-    path: '/search-enhanced',
-    name: 'SearchEnhanced',
-    component: () => import('@/views/home/search-enhanced.vue'),
+    path: '/ticket/booking/:id',
+    name: 'TicketBooking',
+    component: () => import('@/views/ticket/booking.vue'),
     meta: {
-      title: '高级搜索',
+      title: '门票预约',
       showTabBar: false,
+      requireAuth: true,
     },
   },
 ]

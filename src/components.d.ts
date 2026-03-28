@@ -12,7 +12,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     CaptchaButton: typeof import('./components/CaptchaButton.vue')['default']
+    CheckinTimeline: typeof import('./components/CheckinTimeline.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
+    LevelProgress: typeof import('./components/LevelProgress.vue')['default']
+    MedalWall: typeof import('./components/MedalWall.vue')['default']
     PosterGenerator: typeof import('./components/PosterGenerator.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
@@ -29,11 +32,8 @@ declare module 'vue' {
     VanLoading: typeof import('vant/es')['Loading']
     VanNavBar: typeof import('vant/es')['NavBar']
     VanNoticeBar: typeof import('vant/es')['NoticeBar']
-    VanPopup: typeof import('vant/es')['Popup']
     VanProgress: typeof import('vant/es')['Progress']
     VanPullRefresh: typeof import('vant/es')['PullRefresh']
-    VanRadio: typeof import('vant/es')['Radio']
-    VanRadioGroup: typeof import('vant/es')['RadioGroup']
     VanSearch: typeof import('vant/es')['Search']
     VanTab: typeof import('vant/es')['Tab']
     VanTabbar: typeof import('vant/es')['Tabbar']

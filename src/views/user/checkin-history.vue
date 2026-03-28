@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { showLoadingToast, closeToast, showToast } from 'vant'
-import { getCheckinHistory } from '@/api/checkin'
+import { getCheckinList } from '@/api/checkin'
 import { useUserStore } from '@/stores/user'
 import type { CheckIn } from '@/types'
 
@@ -29,9 +29,9 @@ async function fetchCheckinHistory(isLoadMore = false) {
   }
 
   try {
-    const res = await getCheckinHistory({
+    const res = await getCheckinList({
       page: page.value,
-      limit: 20,
+      pageSize: 20,
     })
 
     if (res.code === 0 && res.data) {
@@ -40,10 +40,10 @@ async function fetchCheckinHistory(isLoadMore = false) {
       } else {
         checkinList.value = res.data.list
       }
-      total.value = res.data.total
+      total.value = res.data.pagination.total
 
       // 判断是否加载完毕
-      if (checkinList.value.length >= res.data.total) {
+      if (checkinList.value.length >= res.data.pagination.total) {
         finished.value = true
       }
     }

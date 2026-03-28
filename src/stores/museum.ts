@@ -12,7 +12,7 @@ export const useMuseumStore = defineStore('museum', () => {
   const loading = ref(false)
   const listParams = ref<MuseumListParams>({
     page: 1,
-    pageSize: 20
+    pageSize: 20,
   })
   const hasMore = ref(true)
 
@@ -74,6 +74,6 @@ export const useMuseumStore = defineStore('museum', () => {
     fetchMuseumList,
     fetchNearbyMuseums,
     setCurrentMuseum,
-    clearMuseumList
+    clearMuseumList,
   }
 })

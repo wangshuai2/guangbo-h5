@@ -13,7 +13,7 @@ export function generateUser(): User {
     'medalCount|0-20': 1,
     'checkinCount|0-100': 1,
     'provinceCount|1-34': 1,
-    createdAt: '@datetime'
+    createdAt: '@datetime',
   })
 }
 
@@ -27,7 +27,7 @@ export function generateUserStats(): UserStats {
     provinces: ['北京市', '上海市', '广东省', '江苏省', '浙江省'],
     'medalCount|0-20': 1,
     'exp|0-1000': 1,
-    'level|1-10': 1
+    'level|1-10': 1,
   })
 }
 
@@ -44,7 +44,7 @@ export const mockMedals: Medal[] = [
     expReward: 10,
     isUnlocked: true,
     unlockedAt: '2024-03-23T10:30:00Z',
-    progress: { current: 1, target: 1 }
+    progress: { current: 1, target: 1 },
   },
   {
     id: 2,
@@ -56,7 +56,7 @@ export const mockMedals: Medal[] = [
     rarity: 'rare',
     expReward: 50,
     isUnlocked: false,
-    progress: { current: 5, target: 10 }
+    progress: { current: 5, target: 10 },
   },
   {
     id: 3,
@@ -68,7 +68,7 @@ export const mockMedals: Medal[] = [
     rarity: 'epic',
     expReward: 200,
     isUnlocked: false,
-    progress: { current: 5, target: 50 }
+    progress: { current: 5, target: 50 },
   },
   {
     id: 4,
@@ -80,7 +80,7 @@ export const mockMedals: Medal[] = [
     rarity: 'rare',
     expReward: 100,
     isUnlocked: false,
-    progress: { current: 3, target: 5 }
+    progress: { current: 3, target: 5 },
   },
   {
     id: 5,
@@ -92,8 +92,8 @@ export const mockMedals: Medal[] = [
     rarity: 'legendary',
     expReward: 500,
     isUnlocked: false,
-    progress: { current: 3, target: 20 }
-  }
+    progress: { current: 3, target: 20 },
+  },
 ]
 
 // 生成打卡记录
@@ -103,7 +103,7 @@ export function generateCheckins(count = 10): CheckIn[] {
     id: index + 1,
     museumId: museum.id,
     museum,
-    checkedAt: Mock.Random.datetime('yyyy-MM-dd HH:mm:ss')
+    checkedAt: Mock.Random.datetime('yyyy-MM-dd HH:mm:ss'),
   }))
 }
 

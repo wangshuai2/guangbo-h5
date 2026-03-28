@@ -70,8 +70,8 @@ function handleCaptchaFail() {
 }
 
 // 验证出错
-function handleCaptchaError(message: string) {
-  showToast(message || '验证出错')
+function handleCaptchaError(error: { msg: string }) {
+  showToast(error.msg || '验证出错')
 }
 
 // 游客模式

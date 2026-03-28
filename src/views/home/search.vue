@@ -33,7 +33,13 @@ function goToDetail(id: number) {
 
 <template>
   <div class="search-page">
-    <van-search v-model="searchValue" placeholder="搜索博物馆" show-action autofocus @search="onSearch">
+    <van-search
+      v-model="searchValue"
+      placeholder="搜索博物馆"
+      show-action
+      autofocus
+      @search="onSearch"
+    >
       <template #action>
         <van-button size="small" type="primary" @click="onSearch">搜索</van-button>
       </template>
@@ -44,7 +50,12 @@ function goToDetail(id: number) {
     <van-empty v-else-if="searchResults.length === 0 && searchValue" description="没有找到相关博物馆" />
 
     <div class="result-list" v-else>
-      <div v-for="museum in searchResults" :key="museum.id" class="result-item" @click="goToDetail(museum.id)">
+      <div
+        v-for="museum in searchResults"
+        :key="museum.id"
+        class="result-item"
+        @click="goToDetail(museum.id)"
+      >
         <van-image :src="museum.coverImage" width="80" height="60" fit="cover" radius="4" />
         <div class="museum-info">
           <div class="museum-name">{{ museum.name }}</div>

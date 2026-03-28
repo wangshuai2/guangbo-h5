@@ -1,10 +1,21 @@
 import Mock from 'mockjs'
-import { mockMuseums, getMuseumById, getMuseumsByProvince, getMuseumsByCity, searchMuseums } from './data/museums'
-import { mockUser, mockUserStats, mockMedals, mockCheckins } from './data/users'
+import {
+  mockMuseums,
+  getMuseumById,
+  getMuseumsByProvince,
+  getMuseumsByCity,
+  searchMuseums,
+} from './data/museums'
+import {
+  mockUser,
+  mockUserStats,
+  mockMedals,
+  mockCheckins,
+} from './data/users'
 
 // 设置延迟
 Mock.setup({
-  timeout: '200-500'
+  timeout: '200-500',
 })
 
 // 分页辅助函数
@@ -19,8 +30,8 @@ function paginate<T>(list: T[], page = 1, pageSize = 20) {
       pageSize,
       total: list.length,
       totalPages: Math.ceil(list.length / pageSize),
-      hasMore: end < list.length
-    }
+      hasMore: end < list.length,
+    },
   }
 }
 
@@ -32,8 +43,8 @@ function success<T>(data: T, message = 'success') {
     data,
     meta: {
       timestamp: Date.now(),
-      requestId: `req_${Mock.Random.guid()}`
-    }
+      requestId: `req_${Mock.Random.guid()}`,
+    },
   }
 }
 
@@ -44,8 +55,8 @@ function error(code: number, message: string) {
     message,
     meta: {
       timestamp: Date.now(),
-      requestId: `req_${Mock.Random.guid()}`
-    }
+      requestId: `req_${Mock.Random.guid()}`,
+    },
   }
 }
 
@@ -57,7 +68,7 @@ Mock.mock(/\/api\/v1\/auth\/wechat-login/, 'post', (options: any) => {
   return success({
     token,
     expiresIn: 604800,
-    user: mockUser
+    user: mockUser,
   })
 })
 
@@ -116,8 +127,8 @@ Mock.mock(/\/api\/v1\/museums\/nearby/, 'get', () => {
       rating: m.rating,
       distance: Mock.Random.integer(100, 5000),
       latitude: m.latitude,
-      longitude: m.longitude
-    }))
+      longitude: m.longitude,
+    })),
   })
 })
 
@@ -144,8 +155,8 @@ Mock.mock(/\/api\/v1\/checkins/, 'post', (options: any) => {
     medals: unlockedMedals,
     stats: {
       ...mockUserStats,
-      checkinCount: mockUserStats.checkinCount + 1
-    }
+      checkinCount: mockUserStats.checkinCount + 1,
+    },
   })
 })
 
@@ -185,8 +196,8 @@ Mock.mock(/\/api\/v1\/footprint\/map/, 'get', () => {
         .map(c => ({
           id: c.museum.id,
           name: c.museum.name,
-          checkedAt: c.checkedAt
-        }))
+          checkedAt: c.checkedAt,
+        })),
     })),
     checkins: mockCheckins.map(c => ({
       museumId: c.museumId,
@@ -195,8 +206,8 @@ Mock.mock(/\/api\/v1\/footprint\/map/, 'get', () => {
       city: c.museum.city,
       latitude: c.museum.latitude,
       longitude: c.museum.longitude,
-      checkedAt: c.checkedAt
-    }))
+      checkedAt: c.checkedAt,
+    })),
   })
 })
 

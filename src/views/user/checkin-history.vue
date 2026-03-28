@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { showLoadingToast, closeToast, showToast } from 'vant'
-import { getCheckinList } from '@/api/checkin'
+import { getCheckinHistory } from '@/api/checkin'
 import { useUserStore } from '@/stores/user'
 import type { CheckIn } from '@/types'
 
@@ -22,16 +22,16 @@ async function fetchCheckinHistory(isLoadMore = false) {
     showLoadingToast({
       message: '加载中...',
       forbidClick: true,
-      duration: 0
+      duration: 0,
     })
   } else {
     loadingMore.value = true
   }
 
   try {
-    const res = await getCheckinList({
+    const res = await getCheckinHistory({
       page: page.value,
-      pageSize: 20
+      limit: 20,
     })
 
     if (res.code === 0 && res.data) {
@@ -40,10 +40,10 @@ async function fetchCheckinHistory(isLoadMore = false) {
       } else {
         checkinList.value = res.data.list
       }
-      total.value = res.data.pagination.total
+      total.value = res.data.total
 
       // 判断是否加载完毕
-      if (checkinList.value.length >= res.data.pagination.total) {
+      if (checkinList.value.length >= res.data.total) {
         finished.value = true
       }
     }
@@ -107,7 +107,12 @@ onMounted(() => {
     </div>
 
     <!-- 打卡列表 -->
-    <van-list v-model:loading="loadingMore" :finished="finished" finished-text="没有更多了" @load="onLoad">
+    <van-list
+      v-model:loading="loadingMore"
+      :finished="finished"
+      finished-text="没有更多了"
+      @load="onLoad"
+    >
       <div class="checkin-list">
         <div
           v-for="checkin in checkinList"
@@ -115,7 +120,13 @@ onMounted(() => {
           class="checkin-item"
           @click="goToMuseum(checkin.museumId)"
         >
-          <van-image :src="checkin.museum?.coverImage" width="80" height="80" fit="cover" radius="8" />
+          <van-image
+            :src="checkin.museum?.coverImage"
+            width="80"
+            height="80"
+            fit="cover"
+            radius="8"
+          />
           <div class="checkin-info">
             <div class="museum-name">{{ checkin.museum?.name }}</div>
             <div class="location">

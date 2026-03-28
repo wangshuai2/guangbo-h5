@@ -8,8 +8,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/home/index.vue'),
     meta: {
       title: '逛博 - 发现身边的博物馆',
-      showTabBar: true
-    }
+      showTabBar: true,
+    },
   },
   {
     path: '/museum/:id',
@@ -17,8 +17,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/museum/detail.vue'),
     meta: {
       title: '博物馆详情',
-      showTabBar: false
-    }
+      showTabBar: false,
+    },
   },
   {
     path: '/checkin',
@@ -27,8 +27,8 @@ const routes: RouteRecordRaw[] = [
     meta: {
       title: '打卡',
       showTabBar: true,
-      requireAuth: true
-    }
+      requireAuth: true,
+    },
   },
   {
     path: '/medal',
@@ -37,8 +37,8 @@ const routes: RouteRecordRaw[] = [
     meta: {
       title: '勋章',
       showTabBar: true,
-      requireAuth: true
-    }
+      requireAuth: true,
+    },
   },
   {
     path: '/user',
@@ -47,8 +47,8 @@ const routes: RouteRecordRaw[] = [
     meta: {
       title: '我的',
       showTabBar: true,
-      requireAuth: true
-    }
+      requireAuth: true,
+    },
   },
   {
     path: '/user/footprint',
@@ -57,8 +57,8 @@ const routes: RouteRecordRaw[] = [
     meta: {
       title: '我的足迹',
       showTabBar: false,
-      requireAuth: true
-    }
+      requireAuth: true,
+    },
   },
   {
     path: '/user/favorites',
@@ -67,8 +67,8 @@ const routes: RouteRecordRaw[] = [
     meta: {
       title: '我的收藏',
       showTabBar: false,
-      requireAuth: true
-    }
+      requireAuth: true,
+    },
   },
   {
     path: '/login',
@@ -76,8 +76,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/auth/login.vue'),
     meta: {
       title: '登录',
-      showTabBar: false
-    }
+      showTabBar: false,
+    },
   },
   {
     path: '/search',
@@ -85,9 +85,9 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/home/search.vue'),
     meta: {
       title: '搜索',
-      showTabBar: false
-    }
-  }
+      showTabBar: false,
+    },
+  },
 ]
 
 const router = createRouter({
@@ -98,7 +98,7 @@ const router = createRouter({
       return savedPosition
     }
     return { top: 0 }
-  }
+  },
 })
 
 // 路由守卫
@@ -112,7 +112,7 @@ router.beforeEach((to, _from, next) => {
     if (!token) {
       next({
         path: '/login',
-        query: { redirect: to.fullPath }
+        query: { redirect: to.fullPath },
       })
       return
     }

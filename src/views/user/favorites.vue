@@ -33,7 +33,7 @@ onMounted(() => {
   showLoadingToast({
     message: '加载中...',
     forbidClick: true,
-    duration: 0
+    duration: 0,
   })
   fetchFavorites()
 })
@@ -46,7 +46,12 @@ onMounted(() => {
     <van-empty v-if="!loading && favorites.length === 0" description="还没有收藏任何博物馆" />
 
     <div class="favorite-list">
-      <div v-for="museum in favorites" :key="museum.id" class="museum-item" @click="goToDetail(museum.id)">
+      <div
+        v-for="museum in favorites"
+        :key="museum.id"
+        class="museum-item"
+        @click="goToDetail(museum.id)"
+      >
         <van-image :src="museum.coverImage" width="100" height="80" fit="cover" radius="8" />
         <div class="museum-info">
           <div class="museum-name">{{ museum.name }}</div>

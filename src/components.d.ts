@@ -16,6 +16,7 @@ declare module 'vue' {
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     LevelProgress: typeof import('./components/LevelProgress.vue')['default']
     MedalWall: typeof import('./components/MedalWall.vue')['default']
+    NavigationCard: typeof import('./components/NavigationCard.vue')['default']
     PosterGenerator: typeof import('./components/PosterGenerator.vue')['default']
     RatingStars: typeof import('./components/RatingStars.vue')['default']
     ReviewForm: typeof import('./components/ReviewForm.vue')['default']

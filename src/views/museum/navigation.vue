@@ -3,20 +3,23 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { showLoadingToast, closeToast, showToast, showDialog } from 'vant'
 import NavigationCard from '@/components/NavigationCard.vue'
+import { getMuseumNavigation } from '@/api/navigation'
+import type { NavigationData } from '@/api/navigation'
 
 const route = useRoute()
 const router = useRouter()
 
 const museumId = computed(() => Number(route.params.id))
 
-const museum = ref({
+const museum = ref<NavigationData['museum']>({
   id: 0,
   name: '',
   address: '',
   latitude: 0,
-  longitude: 0,
-  distance: 0
+  longitude: 0
 })
+
+const navigationLinks = ref<NavigationData['navigationLinks'] | null>(null)
 
 const userLocation = ref({
   latitude: 0,
@@ -25,35 +28,9 @@ const userLocation = ref({
 
 const loading = ref(false)
 
-// Mock 博物馆数据
-const mockMuseums: Record<number, typeof museum.value> = {
-  1: {
-    id: 1,
-    name: '故宫博物院',
-    address: '北京市东城区景山前街4号',
-    latitude: 39.916345,
-    longitude: 116.397155,
-    distance: 5200
-  },
-  2: {
-    id: 2,
-    name: '上海博物馆',
-    address: '上海市黄浦区人民大道201号',
-    latitude: 31.231706,
-    longitude: 121.475327,
-    distance: 8900
-  },
-  3: {
-    id: 3,
-    name: '秦始皇兵马俑博物馆',
-    address: '陕西省西安市临潼区秦陵北路',
-    latitude: 34.3841,
-    longitude: 109.2785,
-    distance: 15200
-  }
-}
+// 导航链接数据
 
-// 获取博物馆信息
+// 获取博物馆导航信息
 async function fetchMuseumInfo() {
   loading.value = true
   showLoadingToast({
@@ -63,17 +40,10 @@ async function fetchMuseumInfo() {
   })
 
   try {
-    // TODO: 替换为真实 API
-    // const res = await getMuseumDetail(museumId.value)
-    // if (res.code === 0 && res.data) {
-    //   museum.value = res.data
-    // }
-
-    // 使用 Mock 数据
-    await new Promise(resolve => setTimeout(resolve, 500))
-    const mockData = mockMuseums[museumId.value]
-    if (mockData) {
-      museum.value = mockData
+    const res = await getMuseumNavigation(museumId.value)
+    if (res.code === 0 && res.data) {
+      museum.value = res.data.museum
+      navigationLinks.value = res.data.navigationLinks
     } else {
       showToast('博物馆信息不存在')
       router.back()
@@ -179,21 +149,15 @@ function estimateTime(distance: number): string {
 
 // 生成导航链接
 function getNavigationUrl(type: 'amap' | 'bmap' | 'qqmap'): string {
-  const { latitude, longitude, name, address } = museum.value
+  if (!navigationLinks.value) return ''
 
   switch (type) {
     case 'amap':
-      // 高德地图
-      if (userLocation.value.latitude) {
-        return `https://uri.amap.com/navigation?from=${userLocation.value.longitude},${userLocation.value.latitude},我的位置&to=${longitude},${latitude},${encodeURIComponent(name)}&mode=car&policy=1`
-      }
-      return `https://uri.amap.com/navigation?to=${longitude},${latitude},${encodeURIComponent(name)}&mode=car&policy=1`
+      return navigationLinks.value.amap.web
     case 'bmap':
-      // 百度地图
-      return `https://api.map.baidu.com/marker?location=${latitude},${longitude}&title=${encodeURIComponent(name)}&content=${encodeURIComponent(address)}&output=html`
+      return navigationLinks.value.baidu.web
     case 'qqmap':
-      // 腾讯地图
-      return `https://apis.map.qq.com/tools/poimarker?type=0&marker=coord:${latitude},${longitude};title:${encodeURIComponent(name)};addr:${encodeURIComponent(address)}&referer=myapp`
+      return navigationLinks.value.tencent.web
     default:
       return ''
   }
@@ -229,7 +193,6 @@ onMounted(() => {
         :address="museum.address"
         :latitude="museum.latitude"
         :longitude="museum.longitude"
-        :distance="museum.distance"
         @navigate="handleNavigate"
       />
 

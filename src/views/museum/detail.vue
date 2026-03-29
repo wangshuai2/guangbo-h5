@@ -110,36 +110,6 @@ const typeMap: Record<string, string> = {
   general: '综合博物馆',
 }
 
-// 跳转到评价
-function goToReviews() {
-  if (!museum.value) return
-  router.push(`/museum/${museum.value.id}/reviews`)
-}
-
-// 跳转到导航
-function goToNavigation() {
-  if (!museum.value) return
-  router.push(`/museum/${museum.value.id}/navigation`)
-}
-
-// 分享博物馆
-function shareMuseum() {
-  if (!museum.value) return
-  showToast({
-    message: '分享功能开发中',
-    icon: 'share-o'
-  })
-}
-
-// 跳转到笔记
-function goToNotes() {
-  if (!museum.value) return
-  showToast({
-    message: '笔记功能开发中',
-    icon: 'edit'
-  })
-}
-
 onMounted(() => {
   showLoadingToast({
     message: '加载中...',
@@ -193,30 +163,9 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- 功能入口 -->
-        <div class="action-grid">
-          <div class="action-item" @click="goToReviews">
-            <van-icon name="comment-o" size="24" color="#1989fa" />
-            <span>评价</span>
-          </div>
-          <div class="action-item" @click="goToNavigation">
-            <van-icon name="guide-o" size="24" color="#07c160" />
-            <span>导航</span>
-          </div>
-          <div class="action-item" @click="shareMuseum">
-            <van-icon name="share-o" size="24" color="#ff976a" />
-            <span>分享</span>
-          </div>
-          <div class="action-item" @click="goToNotes">
-            <van-icon name="edit" size="24" color="#9c27b0" />
-            <span>笔记</span>
-          </div>
-        </div>
-
         <van-cell-group inset>
           <van-cell title="类型" :value="typeMap[museum.type]" />
-          <van-cell title="地址" :value="museum.address" is-link @click="goToNavigation" />
-          <van-cell title="开放时间" :value="typeof museum.openTime === 'string' ? museum.openTime : '09:00-17:00'" />
+          <van-cell title="地址" :value="museum.address" />
           <van-cell title="门票" :value="museum.ticketInfo || '暂无信息'" />
           <van-cell title="电话" :value="museum.phone || '暂无'" />
           <van-cell v-if="museum.website" title="官网" :value="museum.website" is-link />
@@ -291,35 +240,6 @@ onMounted(() => {
     }
 
     .label {
-      font-size: 12px;
-      color: #646566;
-    }
-  }
-}
-
-.action-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
-  padding: 16px;
-  background: #fff;
-  border-radius: 12px;
-
-  .action-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 12px;
-    cursor: pointer;
-    transition: transform 0.2s;
-
-    &:active {
-      transform: scale(0.95);
-    }
-
-    span {
       font-size: 12px;
       color: #646566;
     }

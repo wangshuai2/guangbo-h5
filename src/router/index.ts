@@ -88,6 +88,16 @@ const routes: RouteRecordRaw[] = [
       showTabBar: false,
     },
   },
+  {
+    path: '/collection',
+    name: 'Collection',
+    component: () => import('@/views/collection/index.vue'),
+    meta: {
+      title: '我的收藏',
+      showTabBar: false,
+      requireAuth: true,
+    },
+  },
 ]
 
 const router = createRouter({

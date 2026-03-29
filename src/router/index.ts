@@ -89,6 +89,55 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/search/enhanced',
+    name: 'SearchEnhanced',
+    component: () => import('@/views/home/search-enhanced.vue'),
+    meta: {
+      title: '高级搜索',
+      showTabBar: false,
+    },
+  },
+  {
+    path: '/user/level',
+    name: 'UserLevel',
+    component: () => import('@/views/user/level.vue'),
+    meta: {
+      title: '等级系统',
+      showTabBar: false,
+      requireAuth: true,
+    },
+  },
+  {
+    path: '/user/signin',
+    name: 'UserSignin',
+    component: () => import('@/views/user/signin.vue'),
+    meta: {
+      title: '每日签到',
+      showTabBar: false,
+      requireAuth: true,
+    },
+  },
+  {
+    path: '/team',
+    name: 'Team',
+    component: () => import('@/views/team/index.vue'),
+    meta: {
+      title: '组队打卡',
+      showTabBar: false,
+      requireAuth: true,
+    },
+  },
+  {
+    path: '/ticket/booking/:id',
+    name: 'TicketBooking',
+    component: () => import('@/views/ticket/booking.vue'),
+    meta: {
+      title: '门票预约',
+      showTabBar: false,
+      requireAuth: true,
+    },
+  },
+  {
     path: '/collection',
     name: 'Collection',
     component: () => import('@/views/collection/index.vue'),

@@ -7,11 +7,6 @@ import '@/styles/index.scss'
 // 引入 Vant 样式
 import 'vant/lib/index.css'
 
-// 开发环境引入 Mock
-if (import.meta.env.DEV) {
-  import('@/mock')
-}
-
 const app = createApp(App)
 
 // 注册插件

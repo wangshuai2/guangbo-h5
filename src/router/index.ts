@@ -89,21 +89,11 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: '/team',
-    name: 'TeamCheckin',
-    component: () => import('@/views/team/index.vue'),
+    path: '/collection',
+    name: 'Collection',
+    component: () => import('@/views/collection/index.vue'),
     meta: {
-      title: '组队打卡',
-      showTabBar: false,
-      requireAuth: true,
-    },
-  },
-  {
-    path: '/ticket/booking/:id',
-    name: 'TicketBooking',
-    component: () => import('@/views/ticket/booking.vue'),
-    meta: {
-      title: '门票预约',
+      title: '我的收藏',
       showTabBar: false,
       requireAuth: true,
     },

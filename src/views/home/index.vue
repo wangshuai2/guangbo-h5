@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast, showLoadingToast, closeToast } from 'vant'
 import { getMuseumList } from '@/api/museum'
@@ -7,6 +7,9 @@ import type { Museum } from '@/types'
 import TodayRecommend from '@/components/TodayRecommend.vue'
 
 const router = useRouter()
+
+// 用户状态
+const isLoggedIn = computed(() => !!localStorage.getItem('token'))
 
 // 状态
 const loading = ref(false)
@@ -24,6 +27,14 @@ const cities = ref<string[]>(['全部'])
 
 // 搜索
 const searchValue = ref('')
+
+// 快捷入口
+const quickEntries = [
+  { id: 'signin', name: '每日签到', icon: 'calendar-o', color: '#ff976a', route: '/user/signin', requireAuth: true },
+  { id: 'favorites', name: '我的收藏', icon: 'star-o', color: '#1989fa', route: '/user/favorites', requireAuth: true },
+  { id: 'footprint', name: '我的足迹', icon: 'records', color: '#07c160', route: '/user/footprint', requireAuth: true },
+  { id: 'medal', name: '勋章墙', icon: 'medal-o', color: '#ffd21e', route: '/medal', requireAuth: true },
+]
 
 // 加载博物馆列表
 async function loadMuseums(isRefresh = false) {
@@ -98,6 +109,23 @@ function onSearch() {
   loadMuseums(true)
 }
 
+// 跳转到搜索页面
+function goToSearch() {
+  router.push('/search')
+}
+
+// 快捷入口点击
+function onQuickEntry(entry: typeof quickEntries[0]) {
+  if (entry.requireAuth && !isLoggedIn.value) {
+    router.push({
+      path: '/login',
+      query: { redirect: entry.route },
+    })
+    return
+  }
+  router.push(entry.route)
+}
+
 // 跳转详情
 function goToDetail(id: number) {
   router.push(`/museum/${id}`)
@@ -121,12 +149,28 @@ onMounted(() => {
       v-model="searchValue"
       placeholder="搜索博物馆"
       show-action
-      @search="onSearch"
+      readonly
+      @click-input="goToSearch"
     >
       <template #action>
-        <van-button size="small" type="primary" @click="onSearch">搜索</van-button>
+        <van-button size="small" type="primary" @click="goToSearch">搜索</van-button>
       </template>
     </van-search>
+
+    <!-- 快捷入口 -->
+    <div class="quick-entries">
+      <div
+        v-for="entry in quickEntries"
+        :key="entry.id"
+        class="entry-item"
+        @click="onQuickEntry(entry)"
+      >
+        <div class="entry-icon" :style="{ backgroundColor: entry.color + '20' }">
+          <van-icon :name="entry.icon" :color="entry.color" size="24" />
+        </div>
+        <span class="entry-name">{{ entry.name }}</span>
+      </div>
+    </div>
 
     <!-- 筛选标签 -->
     <div class="filter-section">
@@ -202,6 +246,41 @@ onMounted(() => {
 .home-page {
   min-height: 100vh;
   background-color: #f7f8fa;
+}
+
+// 快捷入口
+.quick-entries {
+  display: flex;
+  justify-content: space-around;
+  padding: 16px 12px;
+  background-color: #fff;
+  margin-bottom: 12px;
+
+  .entry-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+
+    .entry-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .entry-name {
+      font-size: 12px;
+      color: #646566;
+    }
+
+    &:active {
+      opacity: 0.7;
+    }
+  }
 }
 
 .filter-section {

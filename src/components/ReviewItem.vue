@@ -2,20 +2,7 @@
 import { computed } from 'vue'
 import dayjs from 'dayjs'
 import RatingStars from './RatingStars.vue'
-
-interface Review {
-  id: number
-  userId: number
-  userNickname: string
-  userAvatar: string
-  museumId: number
-  score: number
-  content: string
-  images?: string[]
-  likes: number
-  isLiked: boolean
-  createdAt: string
-}
+import type { Review } from '@/types'
 
 interface Props {
   review: Review

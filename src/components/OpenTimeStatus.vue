@@ -35,11 +35,11 @@ const status = computed(() => {
 
   if (currentTime < openTime) {
     const diff = openTime - currentTime
-    const hours = Math.floor(diff / 60)
+    const diffHours = Math.floor(diff / 60)
     const mins = diff % 60
     return { 
       type: 'before', 
-      text: `还有 ${hours}小时${mins}分钟 开馆`,
+      text: `还有 ${diffHours}小时${mins}分钟 开馆`,
       subText: `${hours.open} 开馆`,
       color: '#ff976a'
     }

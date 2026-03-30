@@ -16,7 +16,8 @@ const isLiked = ref(false)
 const showActions = ref(false)
 
 // 格式化日期
-function formatDate(date: string) {
+function formatDate(date: string | undefined) {
+  if (!date) return ''
   const d = new Date(date)
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
 }
@@ -154,9 +155,9 @@ onMounted(() => {
             <van-icon name="calendar-o" size="14" />
             <span>{{ formatDate(note.visitDate) }}</span>
           </div>
-          <div class="meta-item" v-if="note.museumName">
+          <div class="meta-item" v-if="note.museum?.name">
             <van-icon name="location-o" size="14" />
-            <span>{{ note.museumName }}</span>
+            <span>{{ note.museum.name }}</span>
           </div>
         </div>
 

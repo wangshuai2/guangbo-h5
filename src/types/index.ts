@@ -126,6 +126,21 @@ export interface Rating {
   createdAt: string
 }
 
+// 评论/评价
+export interface Review {
+  id: number
+  userId: number
+  userNickname: string
+  userAvatar: string
+  museumId: number
+  score: number
+  content: string
+  images?: string[]
+  likes: number
+  isLiked: boolean
+  createdAt: string
+}
+
 // 分页参数
 export interface PaginationParams {
   page?: number

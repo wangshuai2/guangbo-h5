@@ -15,12 +15,16 @@ const todaySigned = ref(false)
 const continuousDays = ref(0)
 const totalDays = ref(0)
 
-// 今日奖励
-const todayReward = ref({
-  exp: 10,
-  points: 5,
-  message: '签到成功！获得 10 经验值 + 5 积分'
-})
+// 今日奖励（转换为 SignInReward 组件需要的格式）
+const todayRewards = ref([
+  { day: 1, type: 'exp' as const, value: 10, name: '每日签到', icon: 'fire-o', claimed: false, current: true },
+  { day: 2, type: 'exp' as const, value: 10, name: '每日签到', icon: 'fire-o', claimed: false, current: false },
+  { day: 3, type: 'points' as const, value: 30, name: '连续3天', icon: 'points', claimed: false, current: false },
+  { day: 4, type: 'exp' as const, value: 10, name: '每日签到', icon: 'fire-o', claimed: false, current: false },
+  { day: 5, type: 'exp' as const, value: 10, name: '每日签到', icon: 'fire-o', claimed: false, current: false },
+  { day: 6, type: 'exp' as const, value: 10, name: '每日签到', icon: 'fire-o', claimed: false, current: false },
+  { day: 7, type: 'points' as const, value: 100, name: '连续7天', icon: 'points', claimed: false, current: false },
+])
 
 // 连续签到奖励规则
 const continuousRewards = [
@@ -76,7 +80,7 @@ async function handleSignIn() {
     
     showToast({
       type: 'success',
-      message: todayReward.value.message,
+      message: '签到成功！获得 10 经验值 + 5 积分',
     })
   } catch (error) {
     showToast('签到失败')
@@ -124,7 +128,7 @@ onMounted(() => {
       />
 
       <!-- 今日奖励 -->
-      <SignInReward :reward="todayReward" />
+      <SignInReward :rewards="todayRewards" :continuous-days="continuousDays" />
 
       <!-- 连续签到奖励 -->
       <div class="continuous-rewards">

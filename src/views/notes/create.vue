@@ -55,8 +55,8 @@ async function loadNote() {
       title.value = res.data.title
       content.value = res.data.content
       images.value = res.data.images || []
-      visitDate.value = res.data.visitDate
-      isPublic.value = res.data.isPublic
+      visitDate.value = res.data.visitDate || ''
+      isPublic.value = res.data.isPublic ?? false
     }
   } catch (error) {
     showToast('加载失败')

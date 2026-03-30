@@ -1,9 +1,19 @@
 import { request } from '@/utils/request'
-import type { LoginParams, LoginResponse, User } from '@/types'
+import type { LoginParams, LoginResponse, User, PhoneLoginParams, SendSmsParams } from '@/types'
 
 // 微信登录
 export function wechatLogin(params: LoginParams) {
   return request.post<LoginResponse>('/v1/auth/wechat-login', params)
+}
+
+// 手机号登录
+export function phoneLogin(params: PhoneLoginParams) {
+  return request.post<LoginResponse>('/v1/auth/phone-login', params)
+}
+
+// 发送短信验证码
+export function sendSmsCode(params: SendSmsParams) {
+  return request.post<{ success: boolean }>('/v1/auth/send-sms', params)
 }
 
 // 刷新 Token

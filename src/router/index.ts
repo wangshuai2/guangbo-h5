@@ -71,6 +71,16 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/user/groups',
+    name: 'Groups',
+    component: () => import('@/views/user/groups.vue'),
+    meta: {
+      title: '收藏分组',
+      showTabBar: false,
+      requireAuth: true,
+    },
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/auth/login.vue'),

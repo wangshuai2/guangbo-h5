@@ -71,46 +71,6 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: '/user/groups',
-    name: 'UserGroups',
-    component: () => import('@/views/user/groups.vue'),
-    meta: {
-      title: '收藏分组',
-      showTabBar: false,
-      requireAuth: true,
-    },
-  },
-  {
-    path: '/user/signin',
-    name: 'UserSignin',
-    component: () => import('@/views/user/signin.vue'),
-    meta: {
-      title: '每日签到',
-      showTabBar: false,
-      requireAuth: true,
-    },
-  },
-  {
-    path: '/user/level',
-    name: 'UserLevel',
-    component: () => import('@/views/user/level.vue'),
-    meta: {
-      title: '等级系统',
-      showTabBar: false,
-      requireAuth: true,
-    },
-  },
-  {
-    path: '/user/checkin-history',
-    name: 'CheckinHistory',
-    component: () => import('@/views/user/checkin-history.vue'),
-    meta: {
-      title: '打卡记录',
-      showTabBar: false,
-      requireAuth: true,
-    },
-  },
-  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/auth/login.vue'),
@@ -125,44 +85,6 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/home/search.vue'),
     meta: {
       title: '搜索',
-      showTabBar: false,
-    },
-  },
-  {
-    path: '/search/enhanced',
-    name: 'EnhancedSearch',
-    component: () => import('@/views/home/search.vue'),
-    meta: {
-      title: '高级搜索',
-      showTabBar: false,
-    },
-  },
-  {
-    path: '/collection',
-    name: 'Collection',
-    component: () => import('@/views/user/favorites.vue'),
-    meta: {
-      title: '我的收藏',
-      showTabBar: false,
-      requireAuth: true,
-    },
-  },
-  {
-    path: '/team',
-    name: 'Team',
-    component: () => import('@/views/checkin/index.vue'),
-    meta: {
-      title: '组队打卡',
-      showTabBar: false,
-      requireAuth: true,
-    },
-  },
-  {
-    path: '/ticket/booking/:id?',
-    name: 'TicketBooking',
-    component: () => import('@/views/museum/detail.vue'),
-    meta: {
-      title: '门票预约',
       showTabBar: false,
     },
   },

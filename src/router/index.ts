@@ -88,6 +88,32 @@ const routes: RouteRecordRaw[] = [
       showTabBar: false,
     },
   },
+  // 参观攻略
+  {
+    path: '/guides',
+    name: 'Guides',
+    component: () => import('@/views/guides/index.vue'),
+    meta: { title: '参观攻略', showTabBar: false },
+  },
+  {
+    path: '/guides/:id',
+    name: 'GuideDetail',
+    component: () => import('@/views/guides/detail.vue'),
+    meta: { title: '攻略详情', showTabBar: false },
+  },
+  // 收藏提醒
+  {
+    path: '/collection-reminders',
+    name: 'CollectionReminders',
+    component: () => import('@/views/collection-reminders/index.vue'),
+    meta: { title: '收藏提醒', showTabBar: false, requireAuth: true },
+  },
+  {
+    path: '/collection-reminders/create',
+    name: 'CollectionReminderCreate',
+    component: () => import('@/views/collection-reminders/create.vue'),
+    meta: { title: '添加提醒', showTabBar: false, requireAuth: true },
+  },
 ]
 
 const router = createRouter({

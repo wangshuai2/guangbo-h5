@@ -88,6 +88,64 @@ const routes: RouteRecordRaw[] = [
       showTabBar: false,
     },
   },
+  {
+    path: '/notes',
+    name: 'Notes',
+    component: () => import('@/views/notes/index.vue'),
+    meta: {
+      title: '参观笔记',
+      showTabBar: false,
+    },
+  },
+  {
+    path: '/notes/create',
+    name: 'NoteCreate',
+    component: () => import('@/views/notes/create.vue'),
+    meta: {
+      title: '写笔记',
+      showTabBar: false,
+      requireAuth: true,
+    },
+  },
+  {
+    path: '/notes/:id',
+    name: 'NoteDetail',
+    component: () => import('@/views/notes/detail.vue'),
+    meta: {
+      title: '笔记详情',
+      showTabBar: false,
+    },
+  },
+  {
+    path: '/notes/:id/edit',
+    name: 'NoteEdit',
+    component: () => import('@/views/notes/create.vue'),
+    meta: {
+      title: '编辑笔记',
+      showTabBar: false,
+      requireAuth: true,
+    },
+  },
+  {
+    path: '/user/signin',
+    name: 'UserSignin',
+    component: () => import('@/views/user/signin.vue'),
+    meta: {
+      title: '每日签到',
+      showTabBar: false,
+      requireAuth: true,
+    },
+  },
+  {
+    path: '/user/level',
+    name: 'UserLevel',
+    component: () => import('@/views/user/level.vue'),
+    meta: {
+      title: '等级系统',
+      showTabBar: false,
+      requireAuth: true,
+    },
+  },
 ]
 
 const router = createRouter({

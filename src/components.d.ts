@@ -12,9 +12,23 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     CaptchaButton: typeof import('./components/CaptchaButton.vue')['default']
+    CheckinTimeline: typeof import('./components/CheckinTimeline.vue')['default']
+    CrowdFlow: typeof import('./components/CrowdFlow.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
+    LevelProgress: typeof import('./components/LevelProgress.vue')['default']
+    MedalWall: typeof import('./components/MedalWall.vue')['default']
+    NavigationCard: typeof import('./components/NavigationCard.vue')['default']
+    OpeningHoursReminder: typeof import('./components/OpeningHoursReminder.vue')['default']
+    OpeningStatus: typeof import('./components/OpeningStatus.vue')['default']
+    OpenStatus: typeof import('./components/OpenStatus.vue')['default']
+    PosterGenerator: typeof import('./components/PosterGenerator.vue')['default']
+    RatingStars: typeof import('./components/RatingStars.vue')['default']
+    ReviewForm: typeof import('./components/ReviewForm.vue')['default']
+    ReviewItem: typeof import('./components/ReviewItem.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SignInCalendar: typeof import('./components/SignInCalendar.vue')['default']
+    SignInReward: typeof import('./components/SignInReward.vue')['default']
     TabBar: typeof import('./components/TabBar.vue')['default']
     TodayRecommend: typeof import('./components/TodayRecommend.vue')['default']
     VanButton: typeof import('vant/es')['Button']
@@ -36,5 +50,6 @@ declare module 'vue' {
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
     VanTabs: typeof import('vant/es')['Tabs']
     VanTag: typeof import('vant/es')['Tag']
+    VisitRoute: typeof import('./components/VisitRoute.vue')['default']
   }
 }

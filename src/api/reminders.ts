@@ -51,6 +51,11 @@ export function getMuseumHours(museumId: number) {
   }>(`/v1/museum-hours/${museumId}`)
 }
 
+// 获取提醒列表
+export function getReminderList() {
+  return request.get<{ list: Reminder[] }>('/v1/museum-hours/reminders')
+}
+
 // 创建提醒
 export function createReminder(params: CreateReminderParams) {
   return request.post<Reminder>('/v1/museum-hours/reminders', params)

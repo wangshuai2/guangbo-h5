@@ -133,6 +133,25 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/exhibits/detail.vue'),
     meta: { title: '展品详情', showTabBar: false },
   },
+  // 组队打卡
+  {
+    path: '/team',
+    name: 'Team',
+    component: () => import('@/views/team/index.vue'),
+    meta: { title: '组队打卡', showTabBar: false },
+  },
+  {
+    path: '/team/create',
+    name: 'TeamCreate',
+    component: () => import('@/views/team/create.vue'),
+    meta: { title: '创建队伍', showTabBar: false, requireAuth: true },
+  },
+  {
+    path: '/team/:id',
+    name: 'TeamDetail',
+    component: () => import('@/views/team/detail.vue'),
+    meta: { title: '队伍详情', showTabBar: false },
+  },
   // 用户功能
   {
     path: '/user/signin',

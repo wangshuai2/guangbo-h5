@@ -1,192 +1,252 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { showToast, showDialog } from 'vant'
-import type { Team } from '@/api/team-checkin'
+import { showLoadingToast, closeToast, showToast, showConfirmDialog } from 'vant'
+import { getTeamList, getMyTeams, joinTeam, leaveTeam } from '@/api/team'
+import { useUserStore } from '@/stores/user'
+import type { Team } from '@/api/team'
 
 const router = useRouter()
+const userStore = useUserStore()
 
-const activeTab = ref('create')
-const teamCode = ref('')
+const teams = ref<Team[]>([])
+const myTeams = ref<Team[]>([])
+const loading = ref(true)
+const activeTab = ref<'all' | 'my'>('all')
 
-// 创建组队表单
-const createForm = ref({
-  name: '',
-  maxMembers: 5
-})
+const isLoggedIn = computed(() => userStore.isLoggedIn)
 
-// 当前组队信息
-const currentTeam = ref<Team | null>(null)
-
-// 创建组队
-async function handleCreateTeam() {
-  if (!createForm.value.name.trim()) {
-    showToast('请输入队伍名称')
-    return
-  }
-
+// 加载队伍列表
+async function loadTeams() {
   try {
-    showToast('组队创建成功')
-    activeTab.value = 'manage'
+    const res = await getTeamList()
+    if (res.code === 0 && res.data) {
+      teams.value = res.data.list || []
+    }
   } catch (error) {
-    showToast('创建失败')
+    showToast('加载失败')
   }
 }
 
-// 加入组队
-async function handleJoinTeam() {
-  if (!teamCode.value.trim()) {
-    showToast('请输入队伍码')
+// 加载我的队伍
+async function loadMyTeams() {
+  if (!isLoggedIn.value) return
+  try {
+    const res = await getMyTeams()
+    if (res.code === 0 && res.data) {
+      myTeams.value = res.data.list || []
+    }
+  } catch (error) {
+    console.error('加载我的队伍失败', error)
+  }
+}
+
+// 加载全部
+async function loadAll() {
+  loading.value = true
+  await Promise.all([loadTeams(), loadMyTeams()])
+  loading.value = false
+  closeToast()
+}
+
+// 创建队伍
+function createTeam() {
+  if (!isLoggedIn.value) {
+    router.push('/login')
+    return
+  }
+  router.push('/team/create')
+}
+
+// 查看详情
+function goToDetail(id: number) {
+  router.push(`/team/${id}`)
+}
+
+// 加入队伍
+async function handleJoin(team: Team) {
+  if (!isLoggedIn.value) {
+    router.push('/login')
     return
   }
 
   try {
+    await joinTeam(team.id)
     showToast('加入成功')
-    activeTab.value = 'manage'
+    team.currentMembers++
+    loadMyTeams()
   } catch (error) {
     showToast('加入失败')
   }
 }
 
-// 组队打卡
-async function handleTeamCheckin() {
-  showToast('组队打卡成功')
+// 退出队伍
+async function handleLeave(team: Team) {
+  showConfirmDialog({
+    title: '确认退出',
+    message: '确定要退出这个队伍吗？',
+  }).then(async () => {
+    try {
+      await leaveTeam(team.id)
+      showToast('已退出')
+      team.currentMembers--
+      loadMyTeams()
+    } catch (error) {
+      showToast('操作失败')
+    }
+  }).catch(() => {})
 }
 
-// 解散组队
-async function handleDissolveTeam() {
-  try {
-    await showDialog({
-      title: '确认解散',
-      message: '解散后所有成员将无法继续组队打卡',
-      showCancelButton: true
-    })
-    
-    currentTeam.value = null
-    showToast('已解散')
-  } catch {
-    // 取消
+// 是否已加入
+function isJoined(team: Team) {
+  return myTeams.value.some(t => t.id === team.id)
+}
+
+// 格式化时间
+function formatTime(dateStr: string) {
+  const d = new Date(dateStr)
+  return `${d.getMonth() + 1}月${d.getDate()}日 ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`
+}
+
+// 状态文字
+function getStatusText(status: string) {
+  const map: Record<string, string> = {
+    recruiting: '招募中',
+    active: '进行中',
+    completed: '已完成',
+    cancelled: '已取消',
   }
+  return map[status] || status
 }
 
-// 复制队伍码
-function copyTeamCode() {
-  if (!currentTeam.value) return
-  showToast(`队伍码: ${currentTeam.value.code}`)
+// 状态颜色
+function getStatusType(status: string) {
+  const map: Record<string, string> = {
+    recruiting: 'primary',
+    active: 'success',
+    completed: 'default',
+    cancelled: 'danger',
+  }
+  return map[status] || 'default'
 }
 
 onMounted(() => {
-  // TODO: 获取当前组队信息
+  showLoadingToast({ message: '加载中...', forbidClick: true, duration: 0 })
+  loadAll()
 })
 </script>
 
 <template>
   <div class="team-page">
-    <van-nav-bar
-      title="组队打卡"
-      left-arrow
-      @click-left="router.back()"
-    />
+    <!-- 顶部导航 -->
+    <van-nav-bar title="组队打卡">
+      <template #right>
+        <van-icon name="plus" size="20" @click="createTeam" />
+      </template>
+    </van-nav-bar>
 
-    <div class="page-content">
-      <van-tabs v-model="activeTab" class="team-tabs">
-        <van-tab title="创建队伍" name="create">
-          <div class="tab-content">
-            <div class="form-section">
-              <div class="form-item">
-                <div class="form-label">队伍名称</div>
-                <van-field
-                  v-model="createForm.name"
-                  placeholder="请输入队伍名称"
-                  maxlength="20"
-                />
-              </div>
-              
-              <div class="form-item">
-                <div class="form-label">人数上限</div>
-                <van-stepper v-model="createForm.maxMembers" min="2" max="10" />
-              </div>
+    <!-- 标签切换 -->
+    <van-tabs v-model:active="activeTab">
+      <van-tab name="all" title="全部队伍" />
+      <van-tab name="my" title="我的队伍" />
+    </van-tabs>
+
+    <!-- 队伍列表 -->
+    <div class="team-content" v-if="!loading">
+      <div class="team-list">
+        <div
+          v-for="team in (activeTab === 'my' ? myTeams : teams)"
+          :key="team.id"
+          class="team-card"
+          @click="goToDetail(team.id)"
+        >
+          <!-- 博物馆封面 -->
+          <van-image
+            :src="team.museumCover"
+            width="100%"
+            height="120"
+            fit="cover"
+            radius="12"
+          />
+          
+          <!-- 信息 -->
+          <div class="team-info">
+            <div class="team-header">
+              <div class="team-name">{{ team.name }}</div>
+              <van-tag :type="getStatusType(team.status)" size="small">
+                {{ getStatusText(team.status) }}
+              </van-tag>
+            </div>
+            
+            <div class="team-meta">
+              <span class="museum-name">
+                <van-icon name="location-o" size="12" />
+                {{ team.museumName }}
+              </span>
+              <span class="schedule">
+                <van-icon name="clock-o" size="12" />
+                {{ formatTime(team.scheduledAt) }}
+              </span>
             </div>
 
-            <van-button
-              block
-              round
-              type="primary"
-              size="large"
-              @click="handleCreateTeam"
-            >
-              创建队伍
-            </van-button>
-          </div>
-        </van-tab>
+            <div class="team-members">
+              <div class="member-avatars">
+                <van-image
+                  v-for="(m, i) in team.members.slice(0, 5)"
+                  :key="m.id"
+                  :src="m.avatar || 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg'"
+                  width="24"
+                  height="24"
+                  round
+                  fit="cover"
+                  :style="{ marginLeft: i > 0 ? '-8px' : 0 }"
+                />
+                <span v-if="team.currentMembers > 5" class="more">
+                  +{{ team.currentMembers - 5 }}
+                </span>
+              </div>
+              <span class="member-count">{{ team.currentMembers }}/{{ team.maxMembers }}人</span>
+            </div>
 
-        <van-tab title="加入队伍" name="join">
-          <div class="tab-content">
-            <div class="join-section">
-              <div class="join-title">输入队伍码加入</div>
-              <van-field
-                v-model="teamCode"
-                placeholder="请输入6位队伍码"
-                maxlength="6"
-                class="code-input"
-              />
-              
+            <!-- 操作按钮 -->
+            <div class="team-actions" v-if="team.status === 'recruiting'">
               <van-button
-                block
-                round
+                v-if="!isJoined(team)"
                 type="primary"
-                size="large"
-                @click="handleJoinTeam"
+                size="small"
+                round
+                @click.stop="handleJoin(team)"
               >
                 加入队伍
               </van-button>
+              <van-button
+                v-else
+                type="default"
+                size="small"
+                round
+                @click.stop="handleLeave(team)"
+              >
+                退出队伍
+              </van-button>
             </div>
           </div>
-        </van-tab>
+        </div>
+      </div>
 
-        <van-tab title="我的队伍" name="manage">
-          <div class="tab-content">
-            <div v-if="!currentTeam" class="empty-team">
-              <van-empty description="暂无队伍">
-                <van-button type="primary" @click="activeTab = 'create'">
-                  创建队伍
-                </van-button>
-              </van-empty>
-            </div>
+      <!-- 空状态 -->
+      <van-empty
+        v-if="(activeTab === 'my' ? myTeams : teams).length === 0"
+        :description="activeTab === 'my' ? '还没有加入队伍' : '暂无队伍'"
+      >
+        <van-button v-if="activeTab === 'all'" type="primary" round @click="createTeam">
+          创建队伍
+        </van-button>
+      </van-empty>
+    </div>
 
-            <div v-else class="team-info">
-              <div class="team-header">
-                <div class="team-name">{{ currentTeam.name }}</div>
-                <div class="team-code" @click="copyTeamCode">
-                  队伍码: {{ currentTeam.code }}
-                  <van-icon name="copy" />
-                </div>
-              </div>
-
-              <div class="team-actions">
-                <van-button
-                  block
-                  round
-                  type="primary"
-                  size="large"
-                  @click="handleTeamCheckin"
-                >
-                  组队打卡
-                </van-button>
-                <van-button
-                  block
-                  round
-                  type="danger"
-                  plain
-                  @click="handleDissolveTeam"
-                >
-                  解散队伍
-                </van-button>
-              </div>
-            </div>
-          </div>
-        </van-tab>
-      </van-tabs>
+    <!-- 浮动按钮 -->
+    <div class="fab" @click="createTeam">
+      <van-icon name="plus" size="24" />
     </div>
   </div>
 </template>
@@ -194,87 +254,100 @@ onMounted(() => {
 <style lang="scss" scoped>
 .team-page {
   min-height: 100vh;
-  background-color: #f7f8fa;
+  background-color: #f5f5f7;
+  padding-bottom: 80px;
 }
 
-.page-content {
+.team-content {
   padding: 12px;
 }
 
-.team-tabs {
-  background-color: #fff;
-  border-radius: 12px;
-}
-
-.tab-content {
-  padding: 20px;
-}
-
-.form-section {
-  margin-bottom: 20px;
-}
-
-.form-item {
-  margin-bottom: 16px;
-}
-
-.form-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #323233;
-  margin-bottom: 8px;
-}
-
-.join-section {
-  text-align: center;
-}
-
-.join-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #323233;
-  margin-bottom: 20px;
-}
-
-.code-input {
-  margin-bottom: 20px;
-}
-
-.empty-team {
-  padding: 40px 0;
-}
-
-.team-info {
-  padding: 16px;
-}
-
-.team-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.team-name {
-  font-size: 20px;
-  font-weight: 600;
-  color: #323233;
-  margin-bottom: 8px;
-}
-
-.team-code {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background-color: #f7f8fa;
-  border-radius: 20px;
-  font-size: 14px;
-  color: #1989fa;
-  cursor: pointer;
-}
-
-.team-actions {
+.team-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.team-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+
+  .team-info {
+    padding: 12px;
+
+    .team-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+
+      .team-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2c2c2e;
+      }
+    }
+
+    .team-meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: #8e8e93;
+
+      span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+    }
+
+    .team-members {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .member-avatars {
+        display: flex;
+        align-items: center;
+
+        .more {
+          margin-left: 4px;
+          font-size: 12px;
+          color: #8e8e93;
+        }
+      }
+
+      .member-count {
+        font-size: 13px;
+        color: #8b5a2b;
+        font-weight: 500;
+      }
+    }
+
+    .team-actions {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #f5f5f7;
+    }
+  }
+}
+
+.fab {
+  position: fixed;
+  right: 16px;
+  bottom: 80px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8b5a2b, #d4a574);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.4);
+  cursor: pointer;
 }
 </style>

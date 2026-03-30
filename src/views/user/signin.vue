@@ -1,71 +1,58 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { showLoadingToast, closeToast, showToast, showDialog } from 'vant'
+import { showToast, showLoadingToast, closeToast } from 'vant'
+import dayjs from 'dayjs'
 import SignInCalendar from '@/components/SignInCalendar.vue'
 import SignInReward from '@/components/SignInReward.vue'
-import dayjs from 'dayjs'
 
 const router = useRouter()
 
-const loading = ref(false)
-const todaySigned = ref(false)
-const continuousDays = ref(3)
-const totalDays = ref(15)
+// 签到状态
 const currentMonth = ref(dayjs().format('YYYY-MM'))
-const signedDates = ref<string[]>([
-  '2026-03-25',
-  '2026-03-26',
-  '2026-03-27'
-])
+const signedDates = ref<string[]>([])
+const todaySigned = ref(false)
+const continuousDays = ref(0)
+const totalDays = ref(0)
 
-// Mock 奖励数据
-const rewards = ref<
-  Array<{
-    day: number
-    type: 'exp' | 'points' | 'medal' | 'chest'
-    value: number
-    name: string
-    icon: string
-    claimed: boolean
-    current: boolean
-  }>
->([
-  { day: 1, type: 'exp', value: 10, name: '新手签到', icon: 'fire-o', claimed: true, current: false },
-  { day: 2, type: 'exp', value: 15, name: '坚持签到', icon: 'fire-o', claimed: true, current: false },
-  { day: 3, type: 'points', value: 5, name: '积分奖励', icon: 'points', claimed: false, current: true },
-  { day: 4, type: 'exp', value: 20, name: '连续签到', icon: 'fire-o', claimed: false, current: false },
-  { day: 5, type: 'points', value: 10, name: '积分奖励', icon: 'points', claimed: false, current: false },
-  { day: 6, type: 'exp', value: 25, name: '坚持奖励', icon: 'fire-o', claimed: false, current: false },
-  { day: 7, type: 'chest', value: 1, name: '周签到宝箱', icon: 'gift-o', claimed: false, current: false }
-])
+// 今日奖励
+const todayReward = ref({
+  exp: 10,
+  points: 5,
+  message: '签到成功！获得 10 经验值 + 5 积分'
+})
 
-// 获取签到数据
-async function fetchSignInData() {
-  loading.value = true
+// 连续签到奖励规则
+const continuousRewards = [
+  { days: 3, reward: '30积分', icon: 'points' },
+  { days: 7, reward: '100积分', icon: 'points' },
+  { days: 15, reward: '限定徽章', icon: 'medal' },
+  { days: 30, reward: '神秘礼盒', icon: 'gift' },
+]
+
+// 加载签到数据
+async function loadSignInData() {
   showLoadingToast({
     message: '加载中...',
     forbidClick: true,
-    duration: 0
+    duration: 0,
   })
 
   try {
-    // TODO: 替换为真实 API
-    // const res = await getSignInData()
-    // if (res.code === 0 && res.data) {
-    //   todaySigned.value = res.data.todaySigned
-    //   continuousDays.value = res.data.continuousDays
-    //   totalDays.value = res.data.totalDays
-    //   signedDates.value = res.data.signedDates
-    //   rewards.value = res.data.rewards
-    // }
-
-    // 使用 Mock 数据
+    // 模拟 API 调用
     await new Promise(resolve => setTimeout(resolve, 500))
+    
+    // 模拟数据
+    signedDates.value = [
+      dayjs().subtract(2, 'day').format('YYYY-MM-DD'),
+      dayjs().subtract(1, 'day').format('YYYY-MM-DD'),
+    ]
+    todaySigned.value = false
+    continuousDays.value = 2
+    totalDays.value = 15
   } catch (error) {
     showToast('加载失败')
   } finally {
-    loading.value = false
     closeToast()
   }
 }
@@ -78,68 +65,41 @@ async function handleSignIn() {
   }
 
   try {
-    // TODO: 替换为真实 API
-    // const res = await signIn()
-    // if (res.code === 0 && res.data) {
-    //   todaySigned.value = true
-    //   continuousDays.value = res.data.continuousDays
-    //   totalDays.value = res.data.totalDays
-    //   signedDates.value.push(dayjs().format('YYYY-MM-DD'))
-    // }
-
-    // Mock 签到
+    // 模拟 API 调用
     await new Promise(resolve => setTimeout(resolve, 500))
+    
+    const today = dayjs().format('YYYY-MM-DD')
+    signedDates.value.push(today)
     todaySigned.value = true
     continuousDays.value++
     totalDays.value++
-    signedDates.value.push(dayjs().format('YYYY-MM-DD'))
-
-    // 更新奖励状态
-    const todayReward = rewards.value.find(r => r.day === continuousDays.value)
-    if (todayReward) {
-      todayReward.claimed = true
-      todayReward.current = false
-      const nextReward = rewards.value.find(r => r.day === continuousDays.value + 1)
-      if (nextReward) {
-        nextReward.current = true
-      }
-    }
-
-    showDialog({
-      title: '签到成功',
-      message: `连续签到 ${continuousDays.value} 天！\n获得经验值 +${10 + continuousDays.value * 2}`,
-      confirmButtonText: '知道了',
-      confirmButtonColor: '#1989fa'
+    
+    showToast({
+      type: 'success',
+      message: todayReward.value.message,
     })
   } catch (error) {
     showToast('签到失败')
   }
 }
 
-// 领取奖励
-async function handleClaimReward(day: number) {
-  try {
-    // TODO: 替换为真实 API
-    // await claimReward(day)
-
-    const reward = rewards.value.find(r => r.day === day)
-    if (reward) {
-      reward.claimed = true
-      reward.current = false
-      showToast(`领取成功：${reward.name}`)
-    }
-  } catch (error) {
-    showToast('领取失败')
+// 选择日期
+function handleSelectDate(date: string) {
+  const isSigned = signedDates.value.includes(date)
+  if (isSigned) {
+    showToast(`${date} 已签到`)
+  } else {
+    showToast(`${date} 未签到`)
   }
 }
 
-// 选择日期
-function handleSelectDate(date: string) {
-  console.log('Selected date:', date)
+// 返回
+function goBack() {
+  router.back()
 }
 
 onMounted(() => {
-  fetchSignInData()
+  loadSignInData()
 })
 </script>
 
@@ -148,7 +108,7 @@ onMounted(() => {
     <van-nav-bar
       title="每日签到"
       left-arrow
-      @click-left="router.back()"
+      @click-left="goBack"
     />
 
     <div class="page-content">
@@ -163,24 +123,43 @@ onMounted(() => {
         @select-date="handleSelectDate"
       />
 
-      <!-- 签到奖励 -->
-      <SignInReward
-        :rewards="rewards"
-        :continuous-days="continuousDays"
-        @claim="handleClaimReward"
-      />
+      <!-- 今日奖励 -->
+      <SignInReward :reward="todayReward" />
+
+      <!-- 连续签到奖励 -->
+      <div class="continuous-rewards">
+        <h3 class="section-title">连续签到奖励</h3>
+        <div class="rewards-list">
+          <div
+            v-for="item in continuousRewards"
+            :key="item.days"
+            class="reward-item"
+            :class="{ achieved: continuousDays >= item.days }"
+          >
+            <div class="reward-icon">
+              <van-icon :name="item.icon" size="24" />
+            </div>
+            <div class="reward-info">
+              <div class="reward-days">连续 {{ item.days }} 天</div>
+              <div class="reward-name">{{ item.reward }}</div>
+            </div>
+            <van-icon
+              v-if="continuousDays >= item.days"
+              name="success"
+              class="achieved-icon"
+            />
+          </div>
+        </div>
+      </div>
 
       <!-- 签到规则 -->
       <div class="signin-rules">
-        <div class="rules-header">
-          <van-icon name="info-o" />
-          <span>签到规则</span>
-        </div>
+        <h3 class="section-title">签到规则</h3>
         <div class="rules-content">
-          <p>1. 每日签到可获得经验值奖励</p>
+          <p>1. 每日签到可获得 10 经验值 + 5 积分</p>
           <p>2. 连续签到可获得额外奖励</p>
           <p>3. 断签后连续天数将重新计算</p>
-          <p>4. 每周连续签到7天可获得宝箱奖励</p>
+          <p>4. 签到记录以服务器时间为准</p>
         </div>
       </div>
     </div>
@@ -197,32 +176,84 @@ onMounted(() => {
   padding: 12px;
 }
 
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #323233;
+  margin-bottom: 12px;
+}
+
+.continuous-rewards {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+
+  .rewards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .reward-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background-color: #f7f8fa;
+    border-radius: 8px;
+
+    &.achieved {
+      background-color: #e8f5e9;
+      border: 1px solid #4caf50;
+    }
+
+    .reward-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background-color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ff976a;
+    }
+
+    .reward-info {
+      flex: 1;
+
+      .reward-days {
+        font-size: 13px;
+        color: #969799;
+        margin-bottom: 4px;
+      }
+
+      .reward-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: #323233;
+      }
+    }
+
+    .achieved-icon {
+      color: #4caf50;
+      font-size: 20px;
+    }
+  }
+}
+
 .signin-rules {
   background-color: #fff;
   border-radius: 12px;
   padding: 16px;
   margin-top: 12px;
 
-  .rules-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #323233;
-    margin-bottom: 12px;
-
-    .van-icon {
-      color: #1989fa;
-    }
-  }
-
   .rules-content {
     p {
-      font-size: 12px;
+      font-size: 13px;
       color: #646566;
       line-height: 1.8;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
 
       &:last-child {
         margin-bottom: 0;

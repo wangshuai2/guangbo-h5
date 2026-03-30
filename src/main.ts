@@ -12,13 +12,6 @@ if (import.meta.env.DEV) {
   import('@/mock')
 }
 
-// 开发环境自动注入测试 Token
-if (import.meta.env.DEV) {
-  import('@/config/test').then(({ initTestToken }) => {
-    initTestToken()
-  })
-}
-
 const app = createApp(App)
 
 // 注册插件

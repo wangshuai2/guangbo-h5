@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router'
 import { showToast, showLoadingToast, closeToast } from 'vant'
 import { getMuseumList } from '@/api/museum'
 import type { Museum } from '@/types'
-import TodayRecommend from '@/components/TodayRecommend.vue'
 
 const router = useRouter()
 
@@ -138,9 +137,6 @@ onMounted(() => {
         <van-tab v-for="city in cities" :key="city" :name="city" :title="city" />
       </van-tabs>
     </div>
-
-    <!-- 今日推荐 -->
-    <TodayRecommend />
 
     <!-- 博物馆列表 -->
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">

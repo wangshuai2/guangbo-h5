@@ -25,14 +25,35 @@ export interface UpdateReminderParams {
   enabled?: boolean
 }
 
-// 获取提醒列表
-export function getReminderList() {
-  return request.get<{ list: Reminder[] }>('/v1/reminders')
+// 获取今日开放时间
+export function getTodayHours() {
+  return request.get<{
+    date: string
+    dayOfWeek: string
+    total: number
+    museums: Array<{
+      id: number
+      name: string
+      coverImage: string
+      address: string
+      hours: { open: string; close: string }
+      isOpen: boolean
+    }>
+  }>('/v1/museum-hours/today')
+}
+
+// 获取博物馆开放时间
+export function getMuseumHours(museumId: number) {
+  return request.get<{
+    museumId: number
+    hours: { open: string; close: string }
+    exceptions: Array<{ date: string; open: string; close: string; reason: string }>
+  }>(`/v1/museum-hours/${museumId}`)
 }
 
 // 创建提醒
 export function createReminder(params: CreateReminderParams) {
-  return request.post<Reminder>('/v1/reminders', params)
+  return request.post<Reminder>('/v1/museum-hours/reminders', params)
 }
 
 // 更新提醒

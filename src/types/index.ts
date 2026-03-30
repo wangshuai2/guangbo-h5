@@ -200,19 +200,6 @@ export interface LoginParams {
   captcha?: CaptchaParams
 }
 
-// 手机号登录参数
-export interface PhoneLoginParams {
-  phone: string
-  smsCode: string
-}
-
-// 发送短信验证码参数
-export interface SendSmsParams {
-  phone: string
-  /** 图形验证码验证结果，用于防止短信轰炸 */
-  captcha?: CaptchaParams
-}
-
 // 登录响应
 export interface LoginResponse {
   token: string

@@ -1,24 +1,39 @@
 // 参观笔记 API
 import { request } from '@/utils/request'
 
+export interface NoteAuthor {
+  id: number
+  nickname: string
+  avatar: string | null
+}
+
+export interface NoteMuseum {
+  id: number
+  name: string
+  coverImage: string
+}
+
 export interface Note {
   id: number
-  museumId: number
-  museumName?: string
   title: string
   content: string
   images: string[]
+  tags?: string[]
+  author: NoteAuthor
+  museum: NoteMuseum
+  likes: number
+  favorites: number
+  comments: number
+  createdAt: string
+  // 编辑时需要
+  museumId?: number
+  visitDate?: string
+  isPublic?: boolean
   location?: {
     latitude: number
     longitude: number
     name?: string
   }
-  visitDate: string
-  isPublic: boolean
-  likes: number
-  comments: number
-  createdAt: string
-  updatedAt: string
 }
 
 export interface NoteListParams {
@@ -58,7 +73,7 @@ export interface UpdateNoteParams {
 
 // 获取笔记列表
 export function getNoteList(params?: NoteListParams) {
-  return request.get<{ list: Note[]; total: number; hasMore: boolean }>('/v1/notes', { params })
+  return request.get<{ list: Note[]; pagination: { page: number; pageSize: number; total: number; totalPages: number; hasMore: boolean } }>('/v1/notes', { params })
 }
 
 // 获取笔记详情
@@ -98,4 +113,14 @@ export function likeNote(id: number) {
 // 取消点赞
 export function unlikeNote(id: number) {
   return request.delete(`/v1/notes/${id}/like`)
+}
+
+// 收藏笔记
+export function favoriteNote(id: number) {
+  return request.post(`/v1/notes/${id}/favorite`)
+}
+
+// 取消收藏
+export function unfavoriteNote(id: number) {
+  return request.delete(`/v1/notes/${id}/favorite`)
 }

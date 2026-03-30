@@ -14,8 +14,8 @@ const loading = ref(false)
 const refreshing = ref(false)
 const finished = ref(false)
 const page = ref(1)
-const pageSize = 10
-const activeTab = ref<'my' | 'public'>('my')
+const pageSize = 20
+const activeTab = ref<'all' | 'my'>('all')
 
 // 是否登录
 const isLoggedIn = computed(() => userStore.isLoggedIn)
@@ -32,27 +32,21 @@ async function loadNotes(isRefresh = false) {
   }
 
   try {
-    const params: any = {
+    const res = await getNoteList({
       page: page.value,
       pageSize,
-    }
+    })
 
-    if (activeTab.value === 'my') {
-      // 我的笔记
-    } else {
-      // 公开笔记
-      params.isPublic = true
-    }
-
-    const res = await getNoteList(params)
     if (res.code === 0 && res.data) {
+      const list = res.data.list || []
+      
       if (isRefresh) {
-        notes.value = res.data.list
+        notes.value = list
       } else {
-        notes.value.push(...res.data.list)
+        notes.value.push(...list)
       }
 
-      finished.value = !res.data.hasMore
+      finished.value = !res.data.pagination.hasMore
       page.value++
     }
   } catch (error) {
@@ -98,9 +92,27 @@ function createNote() {
 }
 
 // 格式化日期
-function formatDate(date: string) {
-  const d = new Date(date)
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr)
+  const now = new Date()
+  const diff = now.getTime() - d.getTime()
+  
+  if (diff < 3600000) {
+    const minutes = Math.floor(diff / 60000)
+    return minutes <= 1 ? '刚刚' : `${minutes}分钟前`
+  }
+  
+  if (d.toDateString() === now.toDateString()) {
+    return `今天 ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
+  }
+  
+  const yesterday = new Date(now)
+  yesterday.setDate(yesterday.getDate() - 1)
+  if (d.toDateString() === yesterday.toDateString()) {
+    return `昨天 ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
+  }
+  
+  return `${d.getMonth() + 1}月${d.getDate()}日`
 }
 
 onMounted(() => {
@@ -124,8 +136,8 @@ onMounted(() => {
 
     <!-- 标签切换 -->
     <van-tabs v-model:active="activeTab" @change="onTabChange">
+      <van-tab name="all" title="全部笔记" />
       <van-tab name="my" title="我的笔记" />
-      <van-tab name="public" title="公开笔记" />
     </van-tabs>
 
     <!-- 笔记列表 -->
@@ -163,14 +175,27 @@ onMounted(() => {
             <div class="note-content">
               <div class="note-title">{{ note.title }}</div>
               <div class="note-text">{{ note.content }}</div>
-              
+
+              <!-- 作者信息 -->
+              <div class="note-author">
+                <van-image
+                  :src="note.author.avatar || 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg'"
+                  width="24"
+                  height="24"
+                  round
+                  fit="cover"
+                />
+                <span class="author-name">{{ note.author.nickname }}</span>
+                <span class="create-time">{{ formatDate(note.createdAt) }}</span>
+              </div>
+
+              <!-- 博物馆和互动 -->
               <div class="note-meta">
                 <div class="meta-left">
-                  <span class="museum-name" v-if="note.museumName">
+                  <span class="museum-name" v-if="note.museum">
                     <van-icon name="location-o" size="12" />
-                    {{ note.museumName }}
+                    {{ note.museum.name }}
                   </span>
-                  <span class="visit-date">{{ formatDate(note.visitDate) }}</span>
                 </div>
                 <div class="meta-right">
                   <span class="likes">
@@ -190,7 +215,7 @@ onMounted(() => {
         <!-- 空状态 -->
         <van-empty
           v-if="!loading && notes.length === 0"
-          :description="activeTab === 'my' ? '还没有笔记，去记录你的参观之旅吧' : '暂无公开笔记'"
+          :description="activeTab === 'my' ? '还没有笔记，去记录你的参观吧' : '暂无公开笔记'"
         >
           <van-button v-if="activeTab === 'my'" type="primary" round @click="createNote">
             写笔记
@@ -243,13 +268,17 @@ onMounted(() => {
   }
 
   .note-content {
-    padding: 16px;
+    padding: 12px;
 
     .note-title {
       font-size: 16px;
       font-weight: 600;
       color: #2c2c2e;
       margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .note-text {
@@ -258,42 +287,58 @@ onMounted(() => {
       line-height: 1.6;
       margin-bottom: 12px;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
+    }
+
+    .note-author {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+
+      .author-name {
+        font-size: 13px;
+        color: #323233;
+        font-weight: 500;
+      }
+
+      .create-time {
+        font-size: 12px;
+        color: #8e8e93;
+      }
     }
 
     .note-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid #f5f5f7;
 
       .meta-left {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 12px;
-        color: #8e8e93;
-
         .museum-name {
           display: flex;
           align-items: center;
           gap: 4px;
+          font-size: 12px;
+          color: #8b5a2b;
         }
       }
 
       .meta-right {
         display: flex;
         align-items: center;
-        gap: 12px;
-        font-size: 12px;
-        color: #8e8e93;
+        gap: 16px;
 
         .likes,
         .comments {
           display: flex;
           align-items: center;
           gap: 4px;
+          font-size: 12px;
+          color: #8e8e93;
         }
       }
     }
@@ -302,7 +347,7 @@ onMounted(() => {
 
 .fab {
   position: fixed;
-  right: 20px;
+  right: 16px;
   bottom: 80px;
   width: 56px;
   height: 56px;
@@ -312,7 +357,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 20px rgba(139, 90, 43, 0.4);
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.4);
   cursor: pointer;
   transition: transform 0.2s;
 
